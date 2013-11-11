@@ -54,7 +54,7 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
                 $row[] = $accio[1] ? $fases[$accio[1]] : '';
                 $row[] = $accio[2];
                 if (!empty($accio[3])) {
-                    $row[] = $this->data($accio[3], false, time());
+                    $row[] = $this->data($accio[3], 'date', time());
                 } else {
                     $row[] = '';
                 }
@@ -137,7 +137,7 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
             }
 
             $table->data[] = array(
-                userdate($dia->data, '%d %B %Y'),
+                $this->data($dia->data),
                 implode('<br/>', $hores),
                 $validat,
                 implode(' ', $accions),
@@ -177,7 +177,7 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
     }
 
     function confirmacio_suprimir_seguiment($dia) {
-        $data = userdate($dia->data, '%d %B %Y');
+        $data = $this->data($dia->data);
         $message = "Esteu segur que voleu suprimir el dia <em>$data</em>?";
         $continue = $this->controller->url_alumne('suprimir_seguiment', array(
             'dia_id' => $dia->id,
@@ -246,11 +246,12 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         return $this->pagina_alumne('dades', false, $o);
     }
 
-    function data($data, $hora=false, $limit=false) {
+    function data($data, $format='date', $limit=false) {
         if (!$data) {
             return '';
         }
-        $o = userdate($data, $hora ? '%d %B %Y, %H:%M' : '%d %B %Y');
+        $fixday = (strpos($format, 'short') === false);
+        $o = userdate($data, get_string('strftime' . $format), 99, $fixday);
         $classes = 'mod-fpdquadern-data';
         if ($limit and $data > $limit) {
             $classes .= ' mod-fpdquadern-data-retard';
@@ -407,7 +408,7 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
             "Data d'inici",
             "Data final"
         );
-        $table->align = array('left', 'left', 'left', 'left', 'left', 'left');
+        $table->align = array('left', 'left', 'left', 'left', 'center', 'center');
 
         $especialitats = $this->controller->config->especialitats_docents;
         $date = usergetdate(time());
@@ -442,8 +443,8 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
                 $especialitats[$alumne->alumne_especialitat],
                 $alumne->centre_nom,
                 $fase ? $fases[$fase] : '',
-                $this->data($inici),
-                $this->data($final),
+                $this->data($inici, 'datefullshort'),
+                $this->data($final, 'datefullshort'),
             );
         }
 

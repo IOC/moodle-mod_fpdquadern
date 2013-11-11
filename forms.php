@@ -130,7 +130,7 @@ abstract class base_form extends \moodleform {
             $html = format_text($value, $format);
             if ($dataedicio) {
                 $html .= \html_writer::div(
-                    $this->output->data($dataedicio, true, $limitedicio));
+                    $this->output->data($dataedicio, 'datetime', $limitedicio));
             }
             $this->add_element_static('', $label, $html);
         }
