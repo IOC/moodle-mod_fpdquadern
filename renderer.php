@@ -423,7 +423,7 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
             $avis = '';
             if ($this->controller->es_professor() and
                 $alumne->avis_professor()) {
-                $avis = ' ' . $this->icona('i/warning', '(!)');
+                $avis = ' ' . html_writer::tag('strong', '(!)');
             }
 
             $fase = false;
