@@ -332,6 +332,9 @@ class quadern_test extends base_model_test {
         $this->db->expects($this->any())->method('fetch')
                  ->with('alumne', $conditions, true)
                  ->will($this->returnValue(null));
+        $this->db->expects($this->once())->method('create')
+                 ->with('alumne', $conditions)
+                 ->will($this->returnValue($alumne));
         $this->db->expects($this->once())->method('save')->with($alumne);
 
         $result = $this->quadern->alumne($alumne->alumne_id, true);
@@ -571,6 +574,9 @@ class alumne_test extends base_model_test {
         $this->db->expects($this->any())->method('fetch')
                  ->with('fase', $conditions, true)
                  ->will($this->returnValue(null));
+        $this->db->expects($this->any())->method('create')
+                 ->with('fase', $conditions)
+                 ->will($this->returnValue($fase));
         $this->db->expects($this->once())->method('save')->with($fase);
 
         $result = $this->alumne->fase($num);
