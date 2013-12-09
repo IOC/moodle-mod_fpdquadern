@@ -67,25 +67,6 @@
     font-style: italic;
 }
 
-.mod-fpdquadern-activitat-dates {
-    margin-bottom: 10px;
-}
-
-.mod-fpdquadern-activitat-dates-titol {
-    font-weight: bold;
-    font-size: 0.9em;
-    line-height: 2;
-}
-
-.mod-fpdquadern-activitat-data {
-    margin-right: 2em;
-}
-
-.mod-fpdquadern-activitat-descripcio {
-    max-width: 60em;
-    margin-bottom: 10px;
-}
-
 /* Formularis */
 
 .mform.mod-fpdquadern-form {
@@ -138,7 +119,8 @@
     margin: 0;
 }
 
-.mform.mod-fpdquadern-form .fitem .fstatic.felement .mod-fpdquadern-data {
+/* Dates al final d'un camp HTML (probablement després d'un paràgraf) */
+.mform.mod-fpdquadern-form .fitem .fstatic.felement p ~ div > .mod-fpdquadern-data {
     display: block;
     font-style: italic;
     font-size: 0.9em;
@@ -164,7 +146,8 @@
 .mod-fpdquadern-dades-tutor-form .fitem:nth-child(5),
 .mod-fpdquadern-calendari-form .fitem:nth-child(4),
 .mod-fpdquadern-calendari-form .fitem:nth-child(9),
-.mod-fpdquadern-calendari-form .fitem:nth-child(10) {
+.mod-fpdquadern-calendari-form .fitem:nth-child(10),
+.mod-fpdquadern-valoracio-form .fitem:nth-child(4) {
     clear: both !important;
 }
 

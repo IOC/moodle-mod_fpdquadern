@@ -533,33 +533,6 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
 
         $o .= $descripcio;
 
-        if ($activitat->data_valoracio_alumne or
-            $activitat->data_valoracio_professor or
-            $activitat->data_valoracio_tutor) {
-            $o .= $this->output->box_start('mod-fpdquadern-activitat-dates');
-            $o .= html_writer::div(
-                'Data límit de valoració',
-                'mod-fpdquadern-activitat-dates-titol');
-            if ($activitat->data_valoracio_alumne) {
-                $o .= html_writer::span(
-                    'Alumne: ' . $this->data($activitat->data_valoracio_alumne),
-                    'mod-fpdquadern-activitat-data');
-            }
-            if ($activitat->data_valoracio_tutor) {
-                $o .= html_writer::span(
-                    'Tutor: ' .
-                    $this->data($activitat->data_valoracio_tutor),
-                    'mod-fpdquadern-activitat-data');
-            }
-            if ($activitat->data_valoracio_professor) {
-                $o .= html_writer::span(
-                    'Professor: ' .
-                    $this->data($activitat->data_valoracio_professor),
-                    'mod-fpdquadern-activitat-data');
-            }
-            $o .= $this->output->box_end();
-        }
-
         if ($valoracio->valorada()) {
             $form = new mod_fpdquadern\valoracio_form(
                 $this->controller, $activitat, $valoracio);

@@ -82,7 +82,7 @@ abstract class base_form extends \moodleform {
             $this->_form->setType($name, PARAM_INT);
             $this->_form->setDefault($name, $value);
         } else {
-            $html = $value ? userdate($value, '%e %B %Y') : '';
+            $html = $this->output->data($value);
             $this->add_element_static('', $label, $html);
         }
     }
@@ -393,13 +393,13 @@ class activitat_form extends base_form {
             $this->activitat->descripcio, $this->activitat->format_descripcio,
             'descripcio_activitat', $this->activitat->id);
         $this->add_element_date(
-            'data_valoracio_alumne', 'Data límit de valoració (alumne)',
+            'data_valoracio_alumne', 'Data límit de lliurament de l\'alumne',
             $this->activitat->data_valoracio_alumne, true);
         $this->add_element_date(
-            'data_valoracio_professor', 'Data límit de valoració (professor)',
+            'data_valoracio_professor', 'Data d\'avaluació del professor de l\'IOC',
             $this->activitat->data_valoracio_professor, true);
         $this->add_element_date(
-            'data_valoracio_tutor', 'Data límit de valoració (tutor)',
+            'data_valoracio_tutor', 'Data límit d\'avaluació del tutor/mentor',
             $this->activitat->data_valoracio_tutor, true);
 
         $this->add_buttons();
@@ -446,14 +446,14 @@ class activitat_complementaria_form extends base_form {
 
         if ($this->controller->permis_validar_activitat_complementaria()) {
             $this->add_element_date(
-                'data_valoracio_alumne', 'Data límit de valoració',
+                'data_valoracio_alumne', 'Data límit de lliurament de l\'alumne',
                 $this->activitat->data_valoracio_alumne, true);
             $this->add_element_date(
                 'data_valoracio_professor',
-                'Data límit de valoració (professor)',
+                'Data d\'avaluació del professor de l\'IOC',
                 $this->activitat->data_valoracio_professor, true);
             $this->add_element_date(
-                'data_valoracio_tutor', 'Data límit de valoració (tutor)',
+                'data_valoracio_tutor', 'Data límit d\'avaluació del tutor/mentor',
                 $this->activitat->data_valoracio_tutor, true);
         }
 
@@ -729,6 +729,21 @@ class valoracio_form extends base_form {
 
     function definition() {
         global $PAGE;
+
+        if (!$this->editable) {
+            $this->add_element_date(
+                'data_valoracio_alumne',
+                'Data límit de lliurament de l\'alumne',
+                $this->activitat->data_valoracio_alumne, true, true);
+            $this->add_element_date(
+                'data_valoracio_professor',
+                'Data d\'avaluació del professor de l\'IOC',
+                $this->activitat->data_valoracio_professor, true, true);
+            $this->add_element_date(
+                'data_valoracio_tutor',
+                'Data límit d\'avaluació del tutor/mentor',
+                $this->activitat->data_valoracio_tutor, true, true);
+        }
 
         $this->add_element_editor(
             'valoracio_alumne', "Valoració/reflexió de l'alumne/a",
