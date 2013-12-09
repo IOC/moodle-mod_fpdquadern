@@ -33,8 +33,8 @@
     margin: 5px;
 }
 
-.mod-fpdquadern-columne-titol {
-    width: 50%;
+.mod-fpdquadern-columna-text {
+    max-width: 50em;
 }
 
 .mod-fpdquadern-dia-validat.hidden {

@@ -457,6 +457,44 @@ class activitat_complementaria_form extends base_form {
     }
 }
 
+class competencia_form extends base_form {
+
+    private $competencia;
+
+    function __construct($controller, $competencia) {
+        $this->competencia = $competencia;
+        parent::__construct($controller, true);
+    }
+
+    function definition() {
+        if ($this->competencia->avaluada()) {
+            $this->add_element_static('', "Codi", $this->competencia->codi);
+        } else {
+            $this->add_element_text(
+                'codi', "Codi", $this->competencia->codi, 20, 20, PARAM_ALPHANUM
+            );
+            $this->add_rule_required('codi');
+        }
+
+        $this->add_element_textarea(
+            'descripcio', 'Descripció', $this->competencia->descripcio);
+
+        $this->add_buttons();
+    }
+
+    function validation($data, $files) {
+        $errors = array();
+
+        if (isset($data['codi'])) {
+            if ($this->competencia->duplicada($data['codi'])) {
+                $errors['codi'] = "Ja existeix una competència amb aquest codi";
+            }
+        }
+
+        return $errors;
+    }
+}
+
 class dades_alumne_form extends base_form {
 
     function definition() {

@@ -612,6 +612,100 @@ class suprimir_activitat_view extends quadern_view {
     }
 }
 
+class veure_competencies_view extends quadern_view {
+
+    function __construct() {
+        parent::__construct();
+
+        if (!$this->es_admin()) {
+            print_error('nopermissiontoshow');
+        }
+
+        echo $this->output->index_competencies();
+    }
+}
+
+class afegir_competencia_view extends quadern_view {
+
+    function __construct() {
+        parent::__construct();
+
+        if (!$this->es_admin()) {
+            print_error('nopermissiontoshow');
+        }
+
+        $competencia = $this->database->create('competencia', array(
+            'quadern_id' => $this->quadern->id,
+        ));
+
+        $form = new competencia_form($this, $competencia);
+
+        if ($form->is_cancelled()) {
+            redirect($this->url('veure_competencies'));
+        } else if ($data = $form->get_data()) {
+            $competencia->update((array) $data);
+            $competencia->save();
+            redirect($this->url('veure_competencies'));
+        }
+
+        echo $this->output->formulari_competencia($form);
+    }
+}
+
+class editar_competencia_view extends quadern_view {
+
+    function __construct() {
+       $id = required_param('competencia_id', PARAM_INT);
+
+       parent::__construct(array('competencia_id' => $id));
+
+        if (!$this->es_admin()) {
+            print_error('nopermissiontoshow');
+        }
+
+        $competencia = $this->quadern->competencia($id);
+
+        $form = new competencia_form($this, $competencia);
+
+        if ($form->is_cancelled()) {
+            redirect($this->url('veure_competencies'));
+        } else if ($data = $form->get_data()) {
+            $competencia->update((array) $data);
+            $competencia->save();
+            redirect($this->url('veure_competencies'));
+        }
+
+        echo $this->output->formulari_competencia($form);
+    }
+}
+
+class suprimir_competencia_view extends quadern_view {
+
+    function __construct() {
+        $id = required_param('competencia_id', PARAM_INT);
+
+        parent::__construct();
+
+        if (!$this->es_admin()) {
+            print_error('nopermissiontoshow');
+        }
+
+        $competencia = $this->quadern->competencia($id);
+
+        if ($competencia->avaluada($id)) {
+            redirect($this->url('veure_competencies'));
+        }
+
+        if (optional_param('confirm', false, PARAM_BOOL)) {
+            require_sesskey();
+            $competencia->delete();
+            redirect($this->url('veure_competencies'));
+        }
+
+        echo $this->output->confirmacio_suprimir_competencia($competencia);
+    }
+}
+
 class veure_alumnes_view extends quadern_view {
 
     function __construct() {

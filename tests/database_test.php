@@ -371,6 +371,36 @@ class quadern_test extends base_model_test {
 
         $this->assertEquals($alumnes, $result);
     }
+
+   function test_competencia() {
+        $competencia = new competencia($this->db, array('id' => 20));
+        $conditions = array(
+            'id' => $competencia->id,
+            'quadern_id' => $this->quadern->id,
+        );
+        $this->db->expects($this->any())->method('fetch')
+                 ->with('competencia', $conditions)
+                 ->will($this->returnValue($competencia));
+
+        $result = $this->quadern->competencia($competencia->id);
+
+        $this->assertSame($competencia, $result);
+    }
+
+    function test_competencies() {
+        $conditions = array('quadern_id' => $this->quadern->id);
+        $competencies = array(
+            20 => new competencia($this->db, array('id' => 20)),
+            30 => new competencia($this->db, array('id' => 30)),
+        );
+        $this->db->expects($this->any())->method('fetch_all')
+                 ->with('competencia', $conditions, 'codi')
+                 ->will($this->returnValue($competencies));
+
+        $result = $this->quadern->competencies();
+
+        $this->assertSame($competencies, $result);
+    }
 }
 
 class activitat_test extends base_model_test {
@@ -437,6 +467,36 @@ class activitat_test extends base_model_test {
                  ->will($this->returnValueMap($map));
 
         $result = $this->activitat->duplicada($codi);
+
+        $this->assertTrue($result);
+    }
+}
+
+class competencia_test extends base_model_test {
+
+    private $competencia;
+
+    function setUp() {
+        parent::setUp();
+        $this->competencia = new competencia($this->db, array(
+            'id' => 10,
+            'quadern_id' => 20,
+            'codi' => 'C1',
+            'descripcio' => 'Competència 1',
+        ));
+    }
+
+    function test_duplicada() {
+        $codi = 'C2';
+        $conditions = array(
+            'quadern_id' => $this->competencia->quadern_id,
+            'codi' => $codi,
+        );
+        $this->db->expects($this->any())->method('exists_other')
+                 ->with($this->identicalTo($this->competencia), $conditions)
+                 ->will($this->returnValue(true));
+
+        $result = $this->competencia->duplicada($codi);
 
         $this->assertTrue($result);
     }

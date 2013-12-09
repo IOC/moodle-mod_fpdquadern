@@ -77,6 +77,10 @@ function fpdquadern_extend_settings_navigation($settings, $node) {
     $url->param('id', $PAGE->cm->id);
     $url->param('accio', 'veure_activitats');
     $node->add('Activitats', $url, navigation_node::TYPE_SETTING);
+
+    $url = new \moodle_url($url);
+    $url->param('accio', 'veure_competencies');
+    $node->add('Competències', $url, navigation_node::TYPE_SETTING);
 }
 
 function fpdquadern_get_user_grades($quadern, $userid=0) {

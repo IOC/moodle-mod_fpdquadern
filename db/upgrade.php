@@ -64,5 +64,24 @@ function xmldb_fpdquadern_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013120903, 'fpdquadern');
     }
 
+    if ($oldversion < 2013120904) {
+        $table = new xmldb_table('fpdquadern_competencies');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null,
+                          XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('quadern_id', XMLDB_TYPE_INTEGER, '10', null,
+                          XMLDB_NOTNULL, null, null);
+        $table->add_field('codi', XMLDB_TYPE_CHAR, '20', null,
+                          XMLDB_NOTNULL, null, null);
+        $table->add_field('descripcio', XMLDB_TYPE_TEXT, null, null,
+                          XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('quadern_id', XMLDB_INDEX_NOTUNIQUE,
+                          array('quadern_id'));
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        upgrade_mod_savepoint(true, 2013120904, 'fpdquadern');
+    }
+
     return true;
 }

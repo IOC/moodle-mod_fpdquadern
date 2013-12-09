@@ -242,6 +242,20 @@ class quadern extends model {
         }
         return $alumnes;
     }
+
+    function competencia($id) {
+        $conditions = array(
+            'id' => $id,
+            'quadern_id' => $this->id,
+        );
+        return $this->database->fetch('competencia', $conditions);
+    }
+
+    function competencies($fase=null) {
+        $conditions = array('quadern_id' => $this->id);
+        return $this->database->fetch_all('competencia', $conditions, 'codi');
+    }
+
 }
 
 class activitat extends model {
@@ -295,6 +309,30 @@ class activitat extends model {
         } else {
             return false;
         }
+    }
+}
+
+class competencia extends model {
+
+    static $table = 'fpdquadern_competencies';
+
+    static $fields = array(
+        'quadern_id' => null,
+        'codi' => '',
+        'descripcio' => '',
+    );
+
+    function avaluada() {
+        // TODO
+        return false;
+    }
+
+    function duplicada($codi) {
+        $conditions = array(
+            'quadern_id' => $this->quadern_id,
+            'codi' => $codi,
+        );
+        return $this->database->exists_other($this, $conditions);
     }
 }
 

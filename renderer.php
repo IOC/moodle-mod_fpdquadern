@@ -176,6 +176,19 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         return $this->pagina_alumne('activitats', $activitat->fase, $confirm);
     }
 
+    function confirmacio_suprimir_competencia($competencia) {
+        $message = ("Esteu segur que voleu suprimir la competència " .
+                    "<em>{$competencia->codi}</em>?");
+        $continue = $this->controller->url('suprimir_competencia', array(
+            'competencia_id' => $competencia->id,
+            'confirm' => true,
+            'sesskey' => sesskey()
+        ));
+        $cancel = $this->controller->url('veure_competencies');
+        $confirm = $this->output->confirm($message, $continue, $cancel);
+        return $this->pagina($confirm);
+    }
+
     function confirmacio_suprimir_seguiment($dia) {
         $data = $this->data($dia->data);
         $message = "Esteu segur que voleu suprimir el dia <em>$data</em>?";
@@ -298,6 +311,11 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         return $this->pagina_alumne('calendari', $fase, $o);
     }
 
+    function formulari_competencia($form) {
+        return $this->pagina(
+            $this->heading('Competència') . $this->moodleform($form));
+    }
+
     function formulari_dades_alumne($form) {
         $o = $this->heading("Alumne");
         $o .= $this->moodleform($form);
@@ -351,7 +369,7 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         $table = new html_table();
         $table->attributes['class'] = 'generaltable mod-fpdquadern-activitats';
         $table->head = array('Fase', 'Codi', 'Títol', '');
-        $table->colclasses = array('', '', 'mod-fpdquadern-columne-titol');
+        $table->colclasses = array('', '', 'mod-fpdquadern-columna-text');
         $table->align = array('center', 'left', 'left', 'left');
 
         foreach ($this->controller->quadern->activitats() as $a) {
@@ -451,6 +469,42 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         $o .= html_writer::table($table);
 
         return $o;
+    }
+
+    function index_competencies() {
+        $table = new html_table();
+        $table->attributes['class'] = 'generaltable mod-fpdquadern-competencies';
+        $table->head = array('Codi', 'Descripció', '');
+        $table->colclasses = array('', 'mod-fpdquadern-columna-text');
+        $table->align = array('left', 'left', 'left');
+
+        foreach ($this->controller->quadern->competencies() as $c) {
+            $params = array('competencia_id' => $c->id);
+            $url_editar = $this->controller->url('editar_competencia', $params);
+            $url_suprimir = $this->controller->url('suprimir_competencia', $params);
+
+            $accions = array(
+                $this->icona('t/edit', 'Actualitza', $url_editar)
+            );
+            if (!$c->avaluada()) {
+                $accions[] = $this->icona(
+                    't/delete', 'Suprimeix', $url_suprimir
+                );
+            }
+
+            $table->data[] = array(
+                format_string($c->codi),
+                format_string($c->descripcio),
+                implode(' ', $accions),
+            );
+        }
+
+        $o = $this->heading('Competències ' . $this->icona(
+            't/add', 'Afegeix', $this->controller->url('afegir_competencia')
+        ));
+        $o .= html_writer::table($table);
+
+        return $this->pagina($o);
     }
 
     function pagina_accions_pendents($rol, $accions) {
