@@ -792,7 +792,7 @@ class qualificacio_form extends base_form {
         }
 
         $this->add_element_grade(
-            'qualificacio_final', "Qualificació final del pràcticum",
+            'qualificacio_final', "Qualificació final de les pràctiques",
             $this->controller->alumne->qualificacio, $grade);
 
         $this->add_buttons();

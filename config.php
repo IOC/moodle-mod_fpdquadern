@@ -21,9 +21,9 @@ class config {
         );
 
         $this->fases = array(
-            1 => "Pràcticum I",
-            2 => "Pràcticum II",
-            3 => "Pràcticum III",
+            1 => "Fase 1",
+            2 => "Fase 2",
+            3 => "Fase 3",
         );
 
         $this->escala_avaluacio_professor = array(

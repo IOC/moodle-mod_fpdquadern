@@ -331,7 +331,7 @@ class alumne_controller extends quadern_controller {
         if ($this->alumne->qualificacio === null) {
             $accions[] = array(
                 'professor', false,
-                "Introduir la qualificació final del pràcticum",
+                "Introduir la qualificació final de les pràctiques",
                 $this->quadern->data_qualificacio_final
             );
         }

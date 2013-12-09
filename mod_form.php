@@ -9,7 +9,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
- 
+require_once(__DIR__.'/config.php');
+
 class mod_fpdquadern_mod_form extends moodleform_mod {
  
     function definition() {
@@ -30,12 +31,10 @@ class mod_fpdquadern_mod_form extends moodleform_mod {
 
         $this->add_intro_editor(false, 'Descripció');
 
-        $durades = array(
-            'durada_fase_1' => "Durada Pràcticum I",
-            'durada_fase_2' => "Durada Pràcticum II",
-            'durada_fase_3' => "Durada Pràcticum III",
-        );
-        foreach ($durades as $name => $label) {
+        $config = new mod_fpdquadern\config;
+        foreach ($config->fases as $num => $nom) {
+            $name = "durada_fase_$num";
+            $label = "Durada $nom";
             $mform->addElement('text', $name, $label, array('size' => 4));
             $mform->setType($name, PARAM_INT);
             $mform->setDefault($name, 0);
