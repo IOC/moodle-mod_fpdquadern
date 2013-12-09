@@ -232,6 +232,10 @@ class alumne_controller extends quadern_controller {
             if (!$fase->calendari_validat) {
                 if (!$fase->planificacio_introduida()) {
                     $accions[] = array(
+                        'alumne', $num,
+                        "Introduir la planificació"
+                    );
+                    $accions[] = array(
                         'tutor', $num,
                         "Introduir la planificació"
                     );
@@ -378,7 +382,7 @@ class alumne_controller extends quadern_controller {
 
     function permis_editar_calendari($fase) {
         return ($this->es_admin() or $this->es_professor() or
-                ($this->es_tutor() and
+                (($this->es_tutor() or $this->es_alumne()) and
                  !$this->alumne->fase($fase)->calendari_validat));
     }
 
