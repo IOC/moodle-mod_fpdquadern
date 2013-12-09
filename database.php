@@ -501,8 +501,8 @@ class valoracio extends model {
         'valoracio_tutor' => '',
         'format_valoracio_tutor' => FORMAT_HTML,
         'grau_assoliment' => 0,
-        'comentaris_professor' => '',
-        'format_comentaris_professor' => FORMAT_HTML,
+        'valoracio_professor' => '',
+        'format_valoracio_professor' => FORMAT_HTML,
         'avaluacio_professor' => 0,
         'data_valoracio_professor' => 0,
         'data_valoracio_tutor' => 0,
@@ -515,7 +515,7 @@ class valoracio extends model {
 
     function valorada_professor() {
         return ((int) $this->avaluacio_professor or
-                trim($this->comentaris_professor));
+                trim($this->valoracio_professor));
     }
 
     function valorada_tutor() {

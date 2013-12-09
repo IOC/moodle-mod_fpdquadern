@@ -747,7 +747,7 @@ class valoracio_form extends base_form {
 
         $this->add_element_editor(
             'valoracio_tutor',
-            "Valoració del tutor/a del centre de pràctiques",
+            "Observacions del tutor/mentor",
             $this->valoracio->valoracio_tutor,
             $this->valoracio->format_valoracio_tutor,
             'valoracio_activitat_tutor', $this->valoracio->id,
@@ -755,20 +755,20 @@ class valoracio_form extends base_form {
             $this->valoracio->data_valoracio_tutor,
             $this->activitat->data_valoracio_tutor);
 
+        $this->add_element_editor(
+            'valoracio_professor', "Observacions del professor de l'IOC",
+            $this->valoracio->valoracio_professor,
+            $this->valoracio->format_valoracio_professor,
+            'valoracio_activitat_professor', $this->valoracio->id,
+            !$this->controller->permis_editar_valoracio_professor(),
+            $this->valoracio->data_valoracio_professor,
+            $this->activitat->data_valoracio_professor);
+
         $this->add_element_select(
             'grau_assoliment', "Grau d'assoliment",
             $this->valoracio->grau_assoliment,
             $this->controller->config->escala_grau_assoliment,
             !$this->controller->permis_editar_valoracio_tutor());
-
-        $this->add_element_editor(
-            'comentaris_professor', "Comentaris del professor/a de l'IOC",
-            $this->valoracio->comentaris_professor,
-            $this->valoracio->format_comentaris_professor,
-            'valoracio_activitat_professor', $this->valoracio->id,
-            !$this->controller->permis_editar_valoracio_professor(),
-            $this->valoracio->data_valoracio_professor,
-            $this->activitat->data_valoracio_professor);
 
         $this->add_element_select(
             'avaluacio_professor', "Avaluació del professor/a de l'IOC",

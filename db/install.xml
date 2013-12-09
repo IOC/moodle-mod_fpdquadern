@@ -99,8 +99,8 @@
         <FIELD NAME="valoracio_tutor" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="format_valoracio_tutor" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="grau_assoliment" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="comentaris_professor" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="format_comentaris_professor" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="valoracio_professor" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="format_valoracio_professor" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="avaluacio_professor" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="data_valoracio_professor" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="data_valoracio_tutor" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>

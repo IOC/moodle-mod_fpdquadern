@@ -147,7 +147,8 @@
 .mod-fpdquadern-calendari-form .fitem:nth-child(4),
 .mod-fpdquadern-calendari-form .fitem:nth-child(9),
 .mod-fpdquadern-calendari-form .fitem:nth-child(10),
-.mod-fpdquadern-valoracio-form .fitem:nth-child(4) {
+.mod-fpdquadern-valoracio-form .fitem:nth-child(4),
+.mod-fpdquadern-valoracio-form .fitem:nth-child(6) {
     clear: both !important;
 }
 
