@@ -8,7 +8,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version = 2013102908;
+$module->version = 2013120900;
 $module->requires = 2013051400;
 $module->component = 'mod_fpdquadern';
 $module->cron = 0;

@@ -746,15 +746,6 @@ class valoracio_form extends base_form {
         }
 
         $this->add_element_editor(
-            'valoracio_alumne', "Valoració/reflexió de l'alumne/a",
-            $this->valoracio->valoracio_alumne,
-            $this->valoracio->format_valoracio_alumne,
-            'valoracio_activitat_alumne', $this->valoracio->id,
-            !$this->controller->permis_editar_valoracio_alumne(),
-            $this->valoracio->data_valoracio_alumne,
-            $this->activitat->data_valoracio_alumne);
-
-        $this->add_element_editor(
             'valoracio_tutor',
             "Valoració del tutor/a del centre de pràctiques",
             $this->valoracio->valoracio_tutor,

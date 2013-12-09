@@ -498,28 +498,19 @@ class valoracio extends model {
         'quadern_id' => null,
         'alumne_id' => null,
         'activitat_id' => null,
-        'valoracio_alumne' => '',
-        'format_valoracio_alumne' => FORMAT_HTML,
         'valoracio_tutor' => '',
         'format_valoracio_tutor' => FORMAT_HTML,
         'grau_assoliment' => 0,
         'comentaris_professor' => '',
         'format_comentaris_professor' => FORMAT_HTML,
         'avaluacio_professor' => 0,
-        'data_valoracio_alumne' => 0,
         'data_valoracio_professor' => 0,
         'data_valoracio_tutor' => 0,
         'valoracio_validada' => false,
     );
 
     function valorada() {
-        return ($this->valorada_alumne() or
-                $this->valorada_professor() or
-                $this->valorada_tutor());
-    }
-
-    function valorada_alumne() {
-        return (bool) trim($this->valoracio_alumne);
+        return $this->valorada_professor() or $this->valorada_tutor();
     }
 
     function valorada_professor() {

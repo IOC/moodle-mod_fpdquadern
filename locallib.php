@@ -290,12 +290,6 @@ class alumne_controller extends quadern_controller {
                 $text = "Valorar l'activitat " .
                     "<em>{$activitat->titol}</em>";
 
-                if (!$valoracio->valorada_alumne()) {
-                    $accions[] = array(
-                        'alumne', $num, $text,
-                        $activitat->data_valoracio_alumne,
-                    );
-                }
                 if (!$valoracio->valorada_tutor()) {
                     $accions[] = array(
                         'tutor', $num, $text,
@@ -308,8 +302,7 @@ class alumne_controller extends quadern_controller {
                         $activitat->data_valoracio_professor,
                     );
                 }
-                if ($valoracio->valorada_alumne() or
-                    $valoracio->valorada_tutor()) {
+                if ($valoracio->valorada_tutor()) {
                     $accions[] = array(
                         'professor', $num,
                         "Validar la valoració de l'activitat " .
@@ -423,11 +416,7 @@ class alumne_controller extends quadern_controller {
     function permis_editar_valoracio($valoracio, $activitat) {
         return ((!$activitat->complementaria() or $activitat->validada) and
                 ($this->es_admin() or $this->es_professor() or
-                 !$valoracio->valoracio_validada));
-    }
-
-    function permis_editar_valoracio_alumne() {
-        return $this->es_admin() or $this->es_alumne();
+                 ($this->es_tutor() and !$valoracio->valoracio_validada)));
     }
 
     function permis_editar_valoracio_tutor() {
@@ -1053,9 +1042,6 @@ class editar_valoracio_view extends activitat_view {
         } else if ($data = $form->get_data()) {
             $form->save_files($data, $valoracio->id);
             $valoracio->update((array) $data);
-            if ($this->es_alumne() and $valoracio->valorada_alumne()) {
-                $valoracio->data_valoracio_alumne = time();
-            }
             if ($this->es_professor() and $valoracio->valorada_professor()) {
                 $valoracio->data_valoracio_professor = time();
             }
