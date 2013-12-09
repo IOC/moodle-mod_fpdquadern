@@ -183,26 +183,6 @@ abstract class base_form extends \moodleform {
         }
     }
 
-    protected function add_element_hores_planificacio(
-        $label, $name_hores, $value_hores, $name_franja, $value_franja
-    ) {
-        $options = array(
-            0 => '',
-            1 => 'matí',
-            2 => 'tarda',
-            3 => 'matí i tarda',
-        );
-        $elements = array_merge(
-            $this->create_elements_hora($name_hores, $value_hores),
-            array($this->create_element_select(
-                $name_franja, $value_franja, $options
-            ))
-        );
-        $this->_form->addGroup(
-            $elements, $this->unique_name(), $label, ' ', false
-        );
-    }
-
     protected function add_element_select($name, $label, $value, array $options, $static=false) {
         $hasgroups = is_array(reset($options));
         if ($this->editable and !$static) {
@@ -611,13 +591,6 @@ class calendari_form extends base_form {
         $this->add_element_date(
             'data_final', "Data de finalització",
             $this->fase->data_final, true);
-        $dies = array('dilluns', 'dimarts', 'dimecres', 'dijous', 'divendres');
-        foreach ($dies as $dia) {
-            $this->add_element_hores_planificacio(
-                ucfirst($dia),
-                "hores_$dia", $this->fase->{"hores_$dia"},
-                "franja_$dia", $this->fase->{"franja_$dia"});
-        }
         $this->add_element_textarea(
             'observacions_calendari', "Observacions",
             format_string($this->fase->observacions_calendari));

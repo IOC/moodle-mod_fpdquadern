@@ -48,5 +48,21 @@ function xmldb_fpdquadern_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013120902, 'fpdquadern');
     }
 
+    if ($oldversion < 2013120903) {
+        $table = new xmldb_table('fpdquadern_alumne_fases');
+        $dies = array('dillins', 'dimarts', 'dimecres', 'dijous', 'divednres');
+        foreach ($dies as $dia) {
+            $field = new xmldb_field("hores_$dia");
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
+            $field = new xmldb_field("franja_$dia");
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
+        }
+        upgrade_mod_savepoint(true, 2013120903, 'fpdquadern');
+    }
+
     return true;
 }

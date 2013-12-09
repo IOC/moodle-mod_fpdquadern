@@ -457,16 +457,6 @@ class fase extends model {
         'fase' => null,
         'data_inici' => 0,
         'data_final' => 0,
-        'hores_dilluns' => null,
-        'franja_dilluns' => 0,
-        'hores_dimarts' => null,
-        'franja_dimarts' => 0,
-        'hores_dimecres' => null,
-        'franja_dimecres' => 0,
-        'hores_dijous' => null,
-        'franja_dijous' => 0,
-        'hores_divendres' => null,
-        'franja_divendres' => 0,
         'observacions_calendari' => '',
         'calendari_validat' => false,
         'calendari_acceptat' => false,
@@ -476,16 +466,6 @@ class fase extends model {
     function planificacio_introduida() {
         return ((int) $this->data_inici or
                 (int) $this->data_final or
-                (int) $this->hores_dilluns or
-                (int) $this->franja_dilluns or
-                (int) $this->hores_dimarts or
-                (int) $this->franja_dimarts or
-                (int) $this->hores_dimecres or
-                (int) $this->franja_dimecres or
-                (int) $this->hores_dijous or
-                (int) $this->franja_dijous or
-                (int) $this->hores_divendres or
-                (int) $this->franja_divendres or
                 trim($this->observacions_calendari));
     }
 }
