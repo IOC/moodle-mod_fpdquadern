@@ -659,7 +659,7 @@ class seguiment_form extends base_form {
                 $i == 1 ? 'Hores' : '',
                 "de$i", $this->dia->{"de$i"},
                 "a$i", $this->dia->{"a$i"},
-                $i > 1 // optional
+                true // optional
             );
         }
 
