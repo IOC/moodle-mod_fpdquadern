@@ -154,3 +154,15 @@
 .mod-fpdquadern-form .fitem fieldset.felement {
     padding-left: 0;
 }
+
+.mform .mod-fpdquadern-select:first-child {
+    margin-top: 0;
+}
+
+.mform .mod-fpdquadern-avaluacio {
+    margin-top: 0.25em;
+}
+
+.mform .mod-fpdquadern-avaluacio abbr {
+    margin-right: 0.25em;
+}

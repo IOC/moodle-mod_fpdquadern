@@ -61,6 +61,36 @@ abstract class base_form extends \moodleform {
         }
     }
 
+    protected function add_element_avaluacions (
+        $name, $label, $value, array $competencies, array $options, $static=false
+    ) {
+        $elements = array();
+        foreach ($competencies as $c) {
+            $cname = "{$name}_{$c->id}";
+            $cvalue = isset($value[$c->id]) ? $value[$c->id] : 0;
+            if ($cvalue > 0 or ($this->editable and !$static)) {
+                $elements = array_merge($elements, array(
+                    $this->create_element_static(
+                        '<div class="mod-fpdquadern-avaluacio">' .
+                        '<abbr title="' . s($c->descripcio) . '">' .
+                        s($c->codi) . '</abbr> '),
+                    $this->create_element_select($cname, $cvalue, $options, $static),
+                    $this->create_element_static('</div>'),
+                ));
+                if ($this->editable and !$static) {
+                    $this->filters[] = function($data) use ($cname) {
+                        $data->$cname = (int) $data->$cname;
+                    };
+                }
+            }
+        }
+        if ($elements) {
+            $this->_form->addGroup($elements, $name, $label, '', false);
+        } else {
+            $this->add_element_static($name, $label, '');
+        }
+    }
+
     protected function add_element_checkbox(
         $name, $label, $value, $frozen=false
     ) {
@@ -268,9 +298,9 @@ abstract class base_form extends \moodleform {
         }
     }
 
-    protected function create_element_select($name, $value, $options) {
-        if ($this->editable) {
-            $element = $this->_form->createElement('select', $name, null, $options);
+    protected function create_element_select($name, $value, $options, $static=false) {
+        if ($this->editable and !$static) {
+            $element = $this->_form->createElement('select', $name, '', $options);
             $this->_form->setType($name, PARAM_INT);
             $this->_form->setDefault($name, $value);
             return $element;
@@ -775,17 +805,27 @@ class valoracio_form extends base_form {
             $this->valoracio->data_valoracio_professor,
             $this->activitat->data_valoracio_professor);
 
-        $this->add_element_select(
-            'grau_assoliment', "Grau d'assoliment",
-            $this->valoracio->grau_assoliment,
-            $this->controller->config->escala_grau_assoliment,
-            !$this->controller->permis_editar_valoracio_tutor());
+        $competencies = $this->controller->quadern->competencies();
+        $avaluacions_professor = array();
+        $avaluacions_tutor = array();
+        foreach ($this->valoracio->avaluacions() as $id => $a) {
+            $avaluacions_professor[$id] = $a->grau_assoliment_professor;
+            $avaluacions_tutor[$id] = $a->grau_assoliment_tutor;
+        }
 
-        $this->add_element_select(
-            'avaluacio_professor', "Avaluació del professor/a de l'IOC",
-            $this->valoracio->avaluacio_professor,
-            $this->controller->config->escala_avaluacio_professor,
-            !$this->controller->permis_editar_valoracio_professor());
+        $this->add_element_avaluacions(
+            'grau_assoliment_tutor', "Grau d'assoliment (tutor/mentor)",
+            $avaluacions_tutor, $competencies,
+            $this->controller->config->escala_grau_assoliment,
+            !$this->controller->permis_editar_valoracio_tutor()
+        );
+
+        $this->add_element_avaluacions(
+            'grau_assoliment_professor', "Grau d'assoliment (professor de l'IOC)",
+            $avaluacions_professor, $competencies,
+            $this->controller->config->escala_grau_assoliment,
+            !$this->controller->permis_editar_valoracio_professor()
+        );
 
         $this->add_element_validat(
             'valoracio_validada', $this->valoracio->valoracio_validada,

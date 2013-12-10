@@ -1147,7 +1147,38 @@ class editar_valoracio_view extends activitat_view {
                 $valoracio->data_valoracio_tutor = time();
             }
             $valoracio->save();
+
+            $avaluacions = $valoracio->avaluacions();
+
+            foreach ($this->quadern->competencies() as $c) {
+                if (isset($avaluacions[$c->id])) {
+                    $avaluacio = $avaluacions[$c->id];
+                } else {
+                    $avaluacio = $this->database->create('avaluacio', array(
+                        'quadern_id' => $this->quadern->id,
+                        'alumne_id' => $this->alumne->alumne_id,
+                        'activitat_id' => $this->activitat->id,
+                        'competencia_id' => $c->id,
+                    ));
+                }
+                if (isset($data->{"grau_assoliment_professor_{$c->id}"})) {
+                    $avaluacio->grau_assoliment_professor =
+                        $data->{"grau_assoliment_professor_{$c->id}"};
+                }
+                if (isset($data->{"grau_assoliment_tutor_{$c->id}"})) {
+                    $avaluacio->grau_assoliment_tutor =
+                        $data->{"grau_assoliment_tutor_{$c->id}"};
+                }
+                if ($avaluacio->grau_assoliment_professor > 0 or
+                    $avaluacio->grau_assoliment_tutor > 0) {
+                    $avaluacio->save();
+                } else {
+                    $avaluacio->delete();
+                }
+            }
+
             $this->avisar_professor();
+
             redirect($this->url_fase('veure_activitats_alumne'));
         }
 

@@ -324,8 +324,11 @@ class competencia extends model {
     );
 
     function avaluada() {
-        // TODO
-        return false;
+        $conditions = array(
+            'quadern_id' => $this->quadern_id,
+            'competencia_id' => $this->id,
+        );
+        return $this->database->exists('avaluacio', $conditions);
     }
 
     function duplicada($codi) {
@@ -519,28 +522,48 @@ class valoracio extends model {
         'activitat_id' => null,
         'valoracio_tutor' => '',
         'format_valoracio_tutor' => FORMAT_HTML,
-        'grau_assoliment' => 0,
         'valoracio_professor' => '',
         'format_valoracio_professor' => FORMAT_HTML,
-        'avaluacio_professor' => 0,
         'data_valoracio_professor' => 0,
         'data_valoracio_tutor' => 0,
         'valoracio_validada' => false,
     );
+
+    function avaluacions() {
+        $conditions = array(
+            'quadern_id' => $this->quadern_id,
+            'alumne_id' => $this->alumne_id,
+            'activitat_id' => $this->activitat_id,
+        );
+        return $this->database->fetch_all(
+            'avaluacio', $conditions, '', 'competencia_id');
+    }
 
     function valorada() {
         return $this->valorada_professor() or $this->valorada_tutor();
     }
 
     function valorada_professor() {
-        return ((int) $this->avaluacio_professor or
-                trim($this->valoracio_professor));
+        return (bool) trim($this->valoracio_professor);
     }
 
     function valorada_tutor() {
-        return ((int) $this->grau_assoliment or
-                trim($this->valoracio_tutor));
+        return (bool) trim($this->valoracio_tutor);
     }
+}
+
+class avaluacio extends model {
+
+    static $table = 'fpdquadern_alumne_competenci';
+
+    static $fields = array(
+        'quadern_id' => null,
+        'alumne_id' => null,
+        'activitat_id' => null,
+        'competencia_id' => null,
+        'grau_assoliment_professor' => 0,
+        'grau_assoliment_tutor' => 0,
+    );
 }
 
 class seguiment extends model {

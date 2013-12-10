@@ -83,5 +83,44 @@ function xmldb_fpdquadern_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013120904, 'fpdquadern');
     }
 
+    if ($oldversion < 2013120905) {
+        $table = new xmldb_table('fpdquadern_alumne_competenci');
+        $table->add_field('id', XMLDB_TYPE_INTEGER,
+                          '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('quadern_id', XMLDB_TYPE_INTEGER,
+                          '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('alumne_id', XMLDB_TYPE_INTEGER,
+                          '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('activitat_id', XMLDB_TYPE_INTEGER,
+                          '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('competencia_id', XMLDB_TYPE_INTEGER,
+                          '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('grau_assoliment_professor', XMLDB_TYPE_INTEGER,
+                          '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('grau_assoliment_tutor', XMLDB_TYPE_INTEGER,
+                          '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('quadern_alumne_activitat', XMLDB_INDEX_NOTUNIQUE,
+                          array('quadern_id', 'alumne_id', 'activitat_id'));
+        $table->add_index('quadern_competencia', XMLDB_INDEX_NOTUNIQUE,
+                          array('quadern_id', 'competencia_id'));
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        upgrade_mod_savepoint(true, 2013120905, 'fpdquadern');
+    }
+
+    if ($oldversion < 2013120906) {
+        $table = new xmldb_table('fpdquadern_alumne_activitats');
+        $fieldnames = array('grau_assoliment', 'avaluacio_professor');
+        foreach ($fieldnames as $fieldname) {
+            $field = new xmldb_field($fieldname);
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
+        }
+        upgrade_mod_savepoint(true, 2013120906, 'fpdquadern');
+    }
+
     return true;
 }

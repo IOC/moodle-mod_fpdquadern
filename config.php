@@ -26,15 +26,6 @@ class config {
             3 => "Fase 3",
         );
 
-        $this->escala_avaluacio_professor = array(
-            0 => '',
-            1 => 'Negativa',
-            2 => 'Baixa',
-            3 => 'Correcta',
-            4 => 'Bona',
-            5 => 'Molt bona',
-        );
-
         $this->escala_grau_assoliment = array(
             0 => '',
             1 => 'No assolit',

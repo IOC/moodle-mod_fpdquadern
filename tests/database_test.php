@@ -503,6 +503,20 @@ class competencia_test extends base_model_test {
         ));
     }
 
+    function test_avaluada() {
+        $conditions = array(
+            'quadern_id' => $this->competencia->quadern_id,
+            'competencia_id' => $this->competencia->id,
+        );
+        $this->db->expects($this->any())->method('exists')
+                 ->with('avaluacio', $conditions)
+                 ->will($this->returnValue(true));
+
+        $result = $this->competencia->avaluada();
+
+        $this->assertTrue($result);
+    }
+
     function test_duplicada() {
         $codi = 'C2';
         $conditions = array(
@@ -695,6 +709,42 @@ class alumne_test extends base_model_test {
         $result = $this->alumne->$method();
 
         $this->assertSame($user, $result);
+    }
+}
+
+class valoracio_test extends base_model_test {
+
+    private $valoracio;
+
+    function setUp() {
+        parent::setUp();
+        $this->valoracio = new valoracio($this->db, array(
+            'id' => 10,
+            'quadern_id' => 20,
+            'alumne_id' => 30,
+            'activitat_id' => 40,
+        ));
+    }
+
+    function test_avaluacions() {
+        $conditions = array(
+            'quadern_id' => $this->valoracio->quadern_id,
+            'alumne_id' => $this->valoracio->alumne_id,
+            'activitat_id' => $this->valoracio->activitat_id,
+        );
+        $avaluacions = array(
+            60 => new avaluacio($this->db, array(
+                'id' => 80, 'competencia_id' => 60)),
+            70 => new avaluacio($this->db, array(
+                'id' => 90, 'competencia_id' => 70)),
+        );
+        $this->db->expects($this->any())->method('fetch_all')
+                 ->with('avaluacio', $conditions, '', 'competencia_id')
+                 ->will($this->returnValue($avaluacions));
+
+        $result = $this->valoracio->avaluacions();
+
+        $this->assertSame($avaluacions, $result);
     }
 }
 
