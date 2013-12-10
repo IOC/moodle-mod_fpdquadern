@@ -122,47 +122,58 @@ class db_test extends \basic_testcase {
     function test_fetch_all() {
         $conditions = array('field1' => 123);
         $sort = 'field2 ASC';
+        $key = 'field2';
         $fields = 'id,field1,field2';
         $record1 = array('id' => 10, 'field1' => 123, 'field2' => 'text1');
         $record2 = array('id' => 20, 'field1' => 123, 'field2' => 'text2');
-        $records = array((object) $record1, (object) $record2);
+        $records = array(
+            'text1' => (object) $record1,
+            'text2' => (object) $record2,
+        );
 
         $this->moodledb->expects($this->any())->method('get_records')
                        ->with('table', $conditions, $sort, $fields)
                        ->will($this->returnValue($records));
 
-        $result = $this->database->fetch_all('test_model', $conditions, $sort);
+        $result = $this->database->fetch_all(
+            'test_model', $conditions, $sort, $key);
 
         $this->assertInternalType('array', $result);
         $this->assertCount(2, $result);
+        $this->assertEquals(array_keys($records), array_keys($result));
         $this->assertContainsOnlyInstancesOf(
             'mod_fpdquadern\test_model', $result);
-        $this->assertEquals($record1, get_object_vars($result[0]));
-        $this->assertEquals($record2, get_object_vars($result[1]));
+        $this->assertEquals($record1, get_object_vars($result['text1']));
+        $this->assertEquals($record2, get_object_vars($result['text2']));
     }
 
     function test_fetch_all_select() {
         $select = 'field1 = ? OR field2 = ?';
         $params = array(123, 'text');
         $sort = 'field2 ASC';
+        $key = 'field2';
         $fields = 'id,field1,field2';
         $record1 = array('id' => 10, 'field1' => 123, 'field2' => 'text1');
         $record2 = array('id' => 20, 'field1' => 123, 'field2' => 'text2');
-        $records = array((object) $record1, (object) $record2);
+        $records = array(
+            'text1' => (object) $record1,
+            'text2' => (object) $record2,
+        );
 
         $this->moodledb->expects($this->any())->method('get_records_select')
                        ->with('table', $select, $params, $sort, $fields)
                        ->will($this->returnValue($records));
 
         $result = $this->database->fetch_all_select(
-            'test_model', $select, $params, $sort);
+            'test_model', $select, $params, $sort, $key);
 
         $this->assertInternalType('array', $result);
         $this->assertCount(2, $result);
+        $this->assertEquals(array_keys($records), array_keys($result));
         $this->assertContainsOnlyInstancesOf(
             'mod_fpdquadern\test_model', $result);
-        $this->assertEquals($record1, get_object_vars($result[0]));
-        $this->assertEquals($record2, get_object_vars($result[1]));
+        $this->assertEquals($record1, get_object_vars($result['text1']));
+        $this->assertEquals($record2, get_object_vars($result['text2']));
     }
 
     function test_save_existing() {
@@ -364,8 +375,8 @@ class quadern_test extends base_model_test {
         );
         $conditions = array('quadern_id' => $this->quadern->id);
         $this->db->expects($this->any())->method('fetch_all')
-                 ->with('alumne', $conditions)
-                 ->will($this->returnValue(array_values($alumnes)));
+                 ->with('alumne', $conditions, '', 'alumne_id')
+                 ->will($this->returnValue($alumnes));
 
         $result = $this->quadern->alumnes();
 
@@ -532,8 +543,8 @@ class alumne_test extends base_model_test {
              $this->alumne->alumne_id,
         );
         $activitats = array(
-            new activitat($this->db, array('id' => 60)),
-            new activitat($this->db, array('id' => 70)),
+            60 => new activitat($this->db, array('id' => 60)),
+            70 => new activitat($this->db, array('id' => 70)),
         );
 
         $this->db->expects($this->any())->method('fetch_all_select')
@@ -573,8 +584,8 @@ class alumne_test extends base_model_test {
             'fase' => $fase,
         );
         $dies = array(
-            new seguiment($this->db, array('id' => 60)),
-            new seguiment($this->db, array('id' => 70)),
+            60 => new seguiment($this->db, array('id' => 60)),
+            70 => new seguiment($this->db, array('id' => 70)),
         );
         $this->db->expects($this->any())->method('fetch_all')
                  ->with('seguiment', $conditions, 'data DESC')
@@ -594,8 +605,8 @@ class alumne_test extends base_model_test {
             'validat' => false,
         );
         $dies = array(
-            new seguiment($this->db, array('id' => 60)),
-            new seguiment($this->db, array('id' => 70)),
+            60 => new seguiment($this->db, array('id' => 60)),
+            70 => new seguiment($this->db, array('id' => 70)),
         );
         $this->db->expects($this->any())->method('fetch_all')
                  ->with('seguiment', $conditions, 'data DESC')

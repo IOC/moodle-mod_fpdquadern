@@ -69,7 +69,7 @@ class database {
         }
     }
 
-    function fetch_all($model, array $conditions, $sort='') {
+    function fetch_all($model, array $conditions, $sort='', $key='id') {
         $class = __NAMESPACE__ . '\\' . $model;
         $fields = implode(',', $class::field_names());
         $records = $this->moodledb->get_records(
@@ -79,12 +79,13 @@ class database {
         foreach ($records as $record) {
             $object = new $class($this);
             $object->update((array) $record);
-            $objects[] = $object;
+            $objects[$object->$key] = $object;
         }
         return $objects;
     }
 
-    function fetch_all_select($model, $select, array $params, $sort='') {
+    function fetch_all_select($model, $select, array $params,
+                              $sort='', $key='id') {
         $class = __NAMESPACE__ . '\\' . $model;
         $fields = implode(',', $class::field_names());
         $records = $this->moodledb->get_records_select(
@@ -94,7 +95,7 @@ class database {
         foreach ($records as $record) {
             $object = new $class($this);
             $object->update((array) $record);
-            $objects[] = $object;
+            $objects[$object->$key] = $object;
         }
         return $objects;
     }
@@ -237,10 +238,8 @@ class quadern extends model {
     function alumnes() {
         $alumnes = array();
         $conditions = array('quadern_id' => $this->id);
-        foreach ($this->database->fetch_all('alumne', $conditions) as $alumne) {
-            $alumnes[$alumne->alumne_id] = $alumne;
-        }
-        return $alumnes;
+        return $this->database->fetch_all(
+            'alumne', $conditions, '' , 'alumne_id');
     }
 
     function competencia($id) {
