@@ -53,6 +53,12 @@ class db_test extends \basic_testcase {
         $this->database->delete($object);
     }
 
+    function test_delete_new_object() {
+        $object = new test_model($this->database, array('id' => false));
+        $this->moodledb->expects($this->never())->method('delete_records');
+        $this->database->delete($object);
+    }
+
     function test_delete_all() {
         $conditions = array('field1' => 123);
         $this->moodledb->expects($this->once())->method('delete_records')

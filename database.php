@@ -26,9 +26,11 @@ class database {
     }
 
     function delete(model $object) {
-        $class = get_class($object);
-        $conditions = array('id' => $object->id);
-        $this->moodledb->delete_records($class::table(), $conditions);
+        if ($object->id) {
+            $class = get_class($object);
+            $conditions = array('id' => $object->id);
+            $this->moodledb->delete_records($class::table(), $conditions);
+        }
     }
 
     function delete_all($model, array $conditions) {
