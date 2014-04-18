@@ -40,12 +40,13 @@ class mod_fpdquadern_mod_form extends moodleform_mod {
             $mform->setDefault($name, 0);
         }
 
+        $mform->addElement('header', 'dates_limit', "Dates límit");
         $dates = array(
-            'data_dades_generals' => "Data límit dades generals",
-            'data_qualificacio_1' => "Data límit qualificació 1",
-            'data_qualificacio_2' => "Data límit qualificació 2",
-            'data_qualificacio_3' => "Data límit qualificació 3",
-            'data_qualificacio_final' => "Data límit qualificació final",
+            'data_dades_generals' => "Dades generals",
+            'data_qualificacio_1' => "Qualificació 1",
+            'data_qualificacio_2' => "Qualificació 2",
+            'data_qualificacio_3' => "Qualificació 3",
+            'data_qualificacio_final' => "Qualificació final",
         );
         foreach ($dates as $name => $label) {
             $options = array('optional' => true);
