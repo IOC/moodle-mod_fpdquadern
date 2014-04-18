@@ -49,8 +49,10 @@ function fpdquadern_delete_instance($id) {
     $DB->delete_records('fpdquadern_activitats', array('quadern_id' => $id));
     $DB->delete_records('fpdquadern_alumne', array('quadern_id' => $id));
     $DB->delete_records('fpdquadern_alumne_activitats', array('quadern_id' => $id));
+    $DB->delete_records('fpdquadern_alumne_competenci', array('quadern_id' => $id));
     $DB->delete_records('fpdquadern_alumne_fases', array('quadern_id' => $id));
     $DB->delete_records('fpdquadern_alumne_seguiment', array('quadern_id' => $id));
+    $DB->delete_records('fpdquadern_competencies', array('quadern_id' => $id));
     $DB->delete_records('fpdquadern', array('id'=> $quadern->id));
 
     return true;
