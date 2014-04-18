@@ -199,6 +199,9 @@ class quadern extends model {
         'data_qualificacio_2' => 0,
         'data_qualificacio_3' => 0,
         'data_qualificacio_final' => 0,
+        'nom_centre_estudis' => '',
+        'codi_centre_estudis' => '',
+        'adreca_centre_estudis' => '',
     );
 
     function activitat($id) {

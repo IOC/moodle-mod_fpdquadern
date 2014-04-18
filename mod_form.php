@@ -54,6 +54,19 @@ class mod_fpdquadern_mod_form extends moodleform_mod {
             $mform->setDefault($name, 0);
         }
 
+        $mform->addElement('header', 'centre_estudis', "Centre d'estudis");
+        $fields = array(
+            'nom_centre_estudis' => 'Nom',
+            'codi_centre_estudis' => 'Codi de centre',
+            'adreca_centre_estudis' => 'Adreça',
+        );
+        foreach ($fields as $name => $label) {
+            $mform->addElement('text', $name, $label, array('size' => 32));
+            $mform->setType($name, PARAM_TEXT);
+            $mform->addRule($name, get_string('maximumchars', '', 255),
+                           'maxlength', 255, 'client');
+        }
+
         $this->standard_grading_coursemodule_elements();
         $this->standard_coursemodule_elements();
         $this->add_action_buttons();

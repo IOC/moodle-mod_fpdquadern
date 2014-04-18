@@ -14,12 +14,6 @@ class config {
 
     function __construct() {
 
-        $this->centre_estudis = (object) array(
-            'nom' => "Institut Obert de Catalunya",
-            'codi' => "08045203",
-            'adreca' => "Av. del Paral·lel, 71 08029 Barcelona",
-        );
-
         $this->fases = array(
             1 => "Fase 1",
             2 => "Fase 2",

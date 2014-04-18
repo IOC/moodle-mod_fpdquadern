@@ -122,5 +122,36 @@ function xmldb_fpdquadern_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013120906, 'fpdquadern');
     }
 
+    if ($oldversion < 2014041800) {
+        $table = new xmldb_table('fpdquadern');
+        $fieldnames = array(
+            'nom_centre_estudis',
+            'codi_centre_estudis',
+            'adreca_centre_estudis'
+        );
+        $previous = 'data_qualificacio_final';
+        foreach ($fieldnames as $fieldname) {
+            $field = new xmldb_field($fieldname, XMLDB_TYPE_CHAR, '255', null,
+                                     XMLDB_NOTNULL, null, null, $previous);
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+            $previous = $fieldname;
+        }
+        upgrade_mod_savepoint(true, 2014041800, 'fpdquadern');
+    }
+
+    if ($oldversion < 2014041801) {
+        $rs = $DB->get_recordset('fpdquadern', null, '', 'id');
+        foreach ($rs as $r) {
+            $r->nom_centre_estudis = 'Institut Obert de Catalunya';
+            $r->codi_centre_estudis = '08045203';
+            $r->adreca_centre_estudis = 'Av. del Paral·lel, 71 08029 Barcelona';
+            $DB->update_record('fpdquadern', $r);
+        }
+        $rs->close();
+        upgrade_mod_savepoint(true, 2014041801, 'fpdquadern');
+    }
+
     return true;
 }

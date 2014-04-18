@@ -559,11 +559,11 @@ class dades_centre_estudis_form extends base_form {
     function definition() {
         $config = $this->controller->config;
         $this->add_element_static(
-            '', 'Nom', $config->centre_estudis->nom);
+            '', 'Nom', $this->controller->quadern->nom_centre_estudis);
         $this->add_element_static(
-            '', 'Codi de centre', $config->centre_estudis->codi);
+            '', 'Codi de centre', $this->controller->quadern->codi_centre_estudis);
         $this->add_element_static(
-            '', 'Adreça', $config->centre_estudis->adreca);
+            '', 'Adreça', $this->controller->quadern->adreca_centre_estudis);
     }
 }
 
