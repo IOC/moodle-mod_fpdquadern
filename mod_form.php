@@ -9,7 +9,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
-require_once(__DIR__.'/config.php');
+require_once(__DIR__.'/locallib.php');
 
 class mod_fpdquadern_mod_form extends moodleform_mod {
  
@@ -32,22 +32,20 @@ class mod_fpdquadern_mod_form extends moodleform_mod {
         $this->add_intro_editor(false, 'Descripció');
 
         $config = new mod_fpdquadern\config;
-        foreach ($config->fases as $num => $nom) {
+        foreach (range(1, mod_fpdquadern\N_FASES) as $num) {
             $name = "durada_fase_$num";
-            $label = "Durada $nom";
+            $label = "Durada fase $num";
             $mform->addElement('text', $name, $label, array('size' => 4));
             $mform->setType($name, PARAM_INT);
             $mform->setDefault($name, 0);
         }
 
         $mform->addElement('header', 'dates_limit', "Dates límit");
-        $dates = array(
-            'data_dades_generals' => "Dades generals",
-            'data_qualificacio_1' => "Qualificació 1",
-            'data_qualificacio_2' => "Qualificació 2",
-            'data_qualificacio_3' => "Qualificació 3",
-            'data_qualificacio_final' => "Qualificació final",
-        );
+        $dates = array('data_dades_generals' => "Dades generals");
+        foreach (range(1, mod_fpdquadern\N_FASES) as $num) {
+            $dates["data_qualificacio_$num"] = "Qualificació $num";
+        }
+        $dates['data_qualificacio_final'] = "Qualificació final";
         foreach ($dates as $name => $label) {
             $options = array('optional' => true);
             $mform->addElement('date_selector', $name, $label, $options);

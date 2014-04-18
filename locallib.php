@@ -11,6 +11,8 @@ namespace mod_fpdquadern;
 require_once(__DIR__ . '/config.php');
 require_once(__DIR__ . '/database.php');
 
+const N_FASES = 3;
+
 class quadern_controller {
 
     public $cm;
@@ -225,7 +227,7 @@ class alumne_controller extends quadern_controller {
             }
         }
 
-        foreach (array_keys($this->config->fases) as $num) {
+        foreach (range(1, N_FASES) as $num) {
             $fase = $this->alumne->fase($num);
             $activitats = $this->alumne->activitats($num);
 
@@ -739,7 +741,7 @@ class veure_alumne_view extends alumne_view {
         $accio = 'veure_dades';
         $faseactual = false;
 
-        foreach (array_keys($this->config->fases) as $num) {
+        foreach (range(1, N_FASES) as $num) {
             $fase = $this->alumne->fase($num);
             if ($fase->data_inici and $today >= $fase->data_inici) {
                 $accio = 'veure_calendari';
@@ -849,7 +851,7 @@ abstract class fase_view extends alumne_view {
 
         parent::__construct($urlparams);
 
-        if (!isset($this->config->fases[$this->fase])) {
+        if ($this->fase < 1 or $this->fase > N_FASES) {
             print_error('nopermissiontoshow');
         }
     }
@@ -1326,7 +1328,7 @@ class editar_qualificacio_view extends alumne_view {
         if ($form->is_cancelled()) {
             redirect($this->url_alumne('veure_qualificacio'));
         } else if ($data = $form->get_data()) {
-            foreach (array_keys($this->config->fases) as $num) {
+            foreach (range(1, N_FASES) as $num) {
                 $fase = $this->alumne->fase($num);
                 $fase->qualificacio = $data->{"qualificacio_$num"};
                 $fase->save();

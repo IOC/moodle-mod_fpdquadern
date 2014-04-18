@@ -378,7 +378,10 @@ class activitat_form extends base_form {
     }
 
     function definition() {
-        $fases = $this->controller->config->fases;
+        $fases = array();
+        foreach (range(1, N_FASES) as $num) {
+            $fases[$num] = "Fase $num";
+        }
 
         if ($this->activitat->assignada()) {
             $this->add_element_static(
@@ -841,10 +844,10 @@ class qualificacio_form extends base_form {
     function definition() {
         $grade = $this->controller->quadern->grade;
 
-        foreach ($this->controller->config->fases as $num => $nom) {
+        foreach (range(1, N_FASES) as $num) {
             $fase = $this->controller->alumne->fase($num);
             $this->add_element_grade(
-                "qualificacio_$num", $nom,
+                "qualificacio_$num", "Fase $num",
                 $fase->qualificacio, $grade);
         }
 

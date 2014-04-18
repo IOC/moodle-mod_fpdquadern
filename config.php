@@ -14,12 +14,6 @@ class config {
 
     function __construct() {
 
-        $this->fases = array(
-            1 => "Fase 1",
-            2 => "Fase 2",
-            3 => "Fase 3",
-        );
-
         $this->escala_grau_assoliment = array(
             0 => '',
             1 => 'No assolit',

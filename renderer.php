@@ -19,7 +19,6 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
     function accions_pendents($rol, $accions) {
         $o = '';
         $url = $this->controller->url_alumne('veure_accions_pendents');
-        $fases = $this->controller->config->fases;
         $rols = array(
             'admin' => 'Adminitrador',
             'alumne' => 'Alumne',
@@ -51,7 +50,7 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
                 if (!$rol) {
                     $row[] = $rols[$accio[0]];
                 }
-                $row[] = $accio[1] ? $fases[$accio[1]] : '';
+                $row[] = $accio[1] ? "Fase {$accio[1]}" : '';
                 $row[] = $accio[2];
                 if (!empty($accio[3])) {
                     $row[] = $this->data($accio[3], 'date', time());
@@ -431,7 +430,6 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         $especialitats = $this->controller->config->especialitats_docents;
         $date = usergetdate(time());
         $today = make_timestamp($date['year'], $date['mon'], $date['mday']);
-        $fases = $this->controller->config->fases;
 
         foreach ($users as $user) {
             $alumne = $alumnes[$user->id];
@@ -447,7 +445,7 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
             $fase = false;
             $inici = false;
             $final = false;
-            foreach (array_keys($fases) as $num) {
+            foreach (range(1, mod_fpdquadern\N_FASES) as $num) {
                 $f = $alumne->fase($num);
                 if ($f->data_inici and $today >= $f->data_inici) {
                     $fase = $num;
@@ -460,7 +458,7 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
                 $this->output->action_link($url, fullname($user)) . $avis,
                 $especialitats[$alumne->alumne_especialitat],
                 $alumne->centre_nom,
-                $fase ? $fases[$fase] : '',
+                $fase ? "Fase $fase" : '',
                 $this->data($inici, 'datefullshort'),
                 $this->data($final, 'datefullshort'),
             );
@@ -675,10 +673,10 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         $url = $this->controller->url_alumne('veure_dades');
         $tabs[] = new tabobject('dades', $url, 'Dades generals');
 
-        foreach ($this->controller->config->fases as $num => $nom) {
+        foreach (range(1, mod_fpdquadern\N_FASES) as $num) {
             $params = array('fase' => $num);
             $url = $this->controller->url_alumne('veure_calendari', $params);
-            $tabs[] = $t = new tabobject("fase-$num", $url, $nom);
+            $tabs[] = $t = new tabobject("fase-$num", $url, "Fase $num");
             if ($num == $fase) {
                 $t->subtree[] = new tabobject(
                     "calendari-$num", $url, 'Calendari');
