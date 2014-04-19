@@ -7,6 +7,8 @@
  * @author Albert Gasset <albert@ioc.cat>
  */
 
+require_once(__DIR__ . '/../lib.php');
+
 function xmldb_fpdquadern_upgrade($oldversion) {
     global $CFG, $DB;
 
@@ -151,6 +153,38 @@ function xmldb_fpdquadern_upgrade($oldversion) {
         }
         $rs->close();
         upgrade_mod_savepoint(true, 2014041801, 'fpdquadern');
+    }
+
+    if ($oldversion < 2014041802) {
+        $table = new xmldb_table('fpdquadern_llistes');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10',
+                          null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('quadern_id', XMLDB_TYPE_INTEGER, '10',
+                          null, XMLDB_NOTNULL, null, null);
+        $table->add_field('llista', XMLDB_TYPE_CHAR, '255',
+                          null, XMLDB_NOTNULL, null, null);
+        $table->add_field('codi', XMLDB_TYPE_INTEGER, '10',
+                          null, XMLDB_NOTNULL, null, null);
+        $table->add_field('nom', XMLDB_TYPE_CHAR, '255',
+                          null, XMLDB_NOTNULL, null, null);
+        $table->add_field('grup', XMLDB_TYPE_CHAR, '255',
+                          null, XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('quadern_llista_codi', XMLDB_INDEX_UNIQUE,
+                          array('quadern_id', 'llista', 'codi'));
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        upgrade_mod_savepoint(true, 2014041802, 'fpdquadern');
+    }
+
+    if ($oldversion < 2014041803) {
+        $rs = $DB->get_recordset('fpdquadern', null, '', 'id');
+        foreach ($rs as $r) {
+            fpdquadern_crear_llistes_predeterminades($r->id);
+        }
+        $rs->close();
+        upgrade_mod_savepoint(true, 2014041803, 'fpdquadern');
     }
 
     return true;

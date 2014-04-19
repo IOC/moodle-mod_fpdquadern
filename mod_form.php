@@ -31,7 +31,6 @@ class mod_fpdquadern_mod_form extends moodleform_mod {
 
         $this->add_intro_editor(false, 'Descripció');
 
-        $config = new mod_fpdquadern\config;
         foreach (range(1, mod_fpdquadern\N_FASES) as $num) {
             $name = "durada_fase_$num";
             $label = "Durada fase $num";

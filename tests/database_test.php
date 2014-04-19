@@ -418,6 +418,24 @@ class quadern_test extends base_model_test {
 
         $this->assertSame($competencies, $result);
     }
+
+    function test_elements_llista() {
+        $conditions = array(
+            'quadern_id' => $this->quadern->id,
+            'llista' => 'nom_llista',
+        );
+        $elements = array(
+            20 => new element_llista($this->db, array('id' => 20)),
+            30 => new element_llista($this->db, array('id' => 30)),
+        );
+        $this->db->expects($this->any())->method('fetch_all')
+                 ->with('element_llista', $conditions, 'codi')
+                 ->will($this->returnValue($elements));
+
+        $result = $this->quadern->elements_llista('nom_llista');
+
+        $this->assertSame($elements, $result);
+    }
 }
 
 class activitat_test extends base_model_test {

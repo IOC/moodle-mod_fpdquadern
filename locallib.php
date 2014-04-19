@@ -8,7 +8,6 @@
 
 namespace mod_fpdquadern;
 
-require_once(__DIR__ . '/config.php');
 require_once(__DIR__ . '/database.php');
 
 const N_FASES = 3;
@@ -16,7 +15,6 @@ const N_FASES = 3;
 class quadern_controller {
 
     public $cm;
-    public $config;
     public $context;
     public $output;
     public $quadern;
@@ -27,7 +25,6 @@ class quadern_controller {
         global $DB, $PAGE;
 
         $this->cm = $cm;
-        $this->config = new config();
         $this->context = \context_module::instance($this->cm->id);
         $this->database = new database($DB);
 

@@ -260,6 +260,11 @@ class quadern extends model {
         return $this->database->fetch_all('competencia', $conditions, 'codi');
     }
 
+    function elements_llista($llista) {
+        $conditions = array('quadern_id' => $this->id, 'llista' => $llista);
+        return $this->database->fetch_all(
+            'element_llista', $conditions, 'codi');
+    }
 }
 
 class activitat extends model {
@@ -341,6 +346,19 @@ class competencia extends model {
         );
         return $this->database->exists_other($this, $conditions);
     }
+}
+
+class element_llista extends model {
+
+    static $table = 'fpdquadern_llistes';
+
+    static $fields = array(
+        'quadern_id' => null,
+        'llista' => null,
+        'codi' => null,
+        'nom' => null,
+        'grup' => '',
+    );
 }
 
 class alumne extends model {

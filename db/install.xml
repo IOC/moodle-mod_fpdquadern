@@ -186,5 +186,21 @@
         <INDEX NAME="quadern_id" UNIQUE="false" FIELDS="quadern_id"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="fpdquadern_llistes" COMMENT="-">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="quadern_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="llista" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="codi" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="nom" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grup" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="quadern_llista_codi" UNIQUE="true" FIELDS="quadern_id, llista, codi"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>

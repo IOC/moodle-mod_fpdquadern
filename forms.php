@@ -62,12 +62,13 @@ abstract class base_form extends \moodleform {
     }
 
     protected function add_element_avaluacions (
-        $name, $label, $value, array $competencies, array $options, $static=false
+        $name, $label, $value, array $competencies, $static=false
     ) {
         $elements = array();
         foreach ($competencies as $c) {
             $cname = "{$name}_{$c->id}";
             $cvalue = isset($value[$c->id]) ? $value[$c->id] : 0;
+            $options = $this->options_llista('graus_assoliment', $cvalue);
             if ($cvalue > 0 or ($this->editable and !$static)) {
                 $elements = array_merge($elements, array(
                     $this->create_element_static(
@@ -361,6 +362,28 @@ abstract class base_form extends \moodleform {
         }
     }
 
+    protected function options_llista($llista, $value=false) {
+        static $elements = array();
+        if (!isset($elements[$llista])) {
+            $elements[$llista] = $this->controller->quadern->elements_llista($llista);
+        }
+        $options = array('' => array(0 => ''));
+        $value_found = false;
+        foreach ($elements[$llista] as $e) {
+            $options[$e->grup][(int) $e->codi] = $e->nom;
+            if ($e->codi == $value) {
+                $value_found = true;
+            }
+        }
+        if ($value and !$value_found) {
+            $options[''][(int) $value] = "$value";
+        }
+        if (count($options) == 1) {
+            $options = $options[''];
+        }
+        return $options;
+    }
+
     protected function unique_name() {
         static $index = 0;
         $index++;
@@ -537,7 +560,7 @@ class dades_alumne_form extends base_form {
             'alumne_dni', 'DNI', $alumne->alumne_dni, 32);
         $this->add_element_select(
             'alumne_especialitat', 'Especialitat', $alumne->alumne_especialitat,
-            $this->controller->config->especialitats_docents);
+            $this->options_llista('especialitats_docents', $alumne->alumne_especialitat));
         $this->add_element_text(
             'alumne_adreca', 'Adreça', $alumne->alumne_adreca, 32);
         $this->add_element_text(
@@ -549,7 +572,7 @@ class dades_alumne_form extends base_form {
             'alumne_telefon', 'Telèfon', $alumne->alumne_telefon, 32);
         $this->add_element_select(
             'alumne_titol', 'Títol equivalent', $alumne->alumne_titol,
-            $this->controller->config->titols_equivalents);
+            $this->options_llista('titols_equivalents', $alumne->alumne_titol));
         $this->add_element_validat(
             'alumne_validat', $alumne->alumne_validat,
             $this->controller->permis_validar_dades());
@@ -560,7 +583,6 @@ class dades_alumne_form extends base_form {
 class dades_centre_estudis_form extends base_form {
 
     function definition() {
-        $config = $this->controller->config;
         $this->add_element_static(
             '', 'Nom', $this->controller->quadern->nom_centre_estudis);
         $this->add_element_static(
@@ -595,7 +617,7 @@ class dades_centre_practiques_form extends base_form {
             'centre_codi', 'Codi de centre', $alumne->centre_codi, 32);
         $this->add_element_select(
             'centre_tipus', 'Tipus de centre', $alumne->centre_tipus,
-            $this->controller->config->tipus_centre);
+            $this->options_llista('tipus_centre', $alumne->centre_tipus));
         $this->add_element_text(
             'centre_director', 'Nom del director',
             $alumne->centre_director, 32);
@@ -819,14 +841,12 @@ class valoracio_form extends base_form {
         $this->add_element_avaluacions(
             'grau_assoliment_tutor', "Grau d'assoliment (tutor/mentor)",
             $avaluacions_tutor, $competencies,
-            $this->controller->config->escala_grau_assoliment,
             !$this->controller->permis_editar_valoracio_tutor()
         );
 
         $this->add_element_avaluacions(
             'grau_assoliment_professor', "Grau d'assoliment (professor de l'IOC)",
             $avaluacions_professor, $competencies,
-            $this->controller->config->escala_grau_assoliment,
             !$this->controller->permis_editar_valoracio_professor()
         );
 

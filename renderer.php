@@ -427,7 +427,12 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         );
         $table->align = array('left', 'left', 'left', 'left', 'center', 'center');
 
-        $especialitats = $this->controller->config->especialitats_docents;
+
+        $especialitats = array(0 => '');
+        foreach ($this->controller->quadern->elements_llista('especialitats_docents') as $e) {
+            $especialitats[(int) $e->codi] = $e->nom;
+        }
+
         $date = usergetdate(time());
         $today = make_timestamp($date['year'], $date['mon'], $date['mday']);
 
@@ -454,9 +459,15 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
                 }
             }
 
+            if (isset($especialitats[$alumne->alumne_especialitat])) {
+                $especialitat = $especialitats[$alumne->alumne_especialitat];
+            } else {
+                $especialitat = "{$alumne->alumne_especialitat}";
+            }
+
             $table->data[] = array(
                 $this->output->action_link($url, fullname($user)) . $avis,
-                $especialitats[$alumne->alumne_especialitat],
+                $especialitat,
                 $alumne->centre_nom,
                 $fase ? "Fase $fase" : '',
                 $this->data($inici, 'datefullshort'),

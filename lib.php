@@ -13,6 +13,7 @@ function fpdquadern_add_instance($data, $form=null) {
 
     $data->id = $DB->insert_record('fpdquadern', $data);
     fpdquadern_grade_item_update($data);
+    fpdquadern_crear_llistes_predeterminades($data->id);
 
     return $data->id;
 }
@@ -53,6 +54,7 @@ function fpdquadern_delete_instance($id) {
     $DB->delete_records('fpdquadern_alumne_fases', array('quadern_id' => $id));
     $DB->delete_records('fpdquadern_alumne_seguiment', array('quadern_id' => $id));
     $DB->delete_records('fpdquadern_competencies', array('quadern_id' => $id));
+    $DB->delete_records('fpdquadern_llistes', array('quadern_id' => $id));
     $DB->delete_records('fpdquadern', array('id'=> $quadern->id));
 
     return true;
@@ -269,4 +271,39 @@ function fpdquadern_pluginfile(
     }
 
     send_stored_file($file, 86400, 0, false, $options);
+}
+
+function fpdquadern_crear_llistes_predeterminades($quadern_id) {
+    global $CFG, $DB;
+
+    require_once($CFG->libdir . '/csvlib.class.php');
+
+    $llistes = array(
+        'especialitats_docents',
+        'graus_assoliment',
+        'tipus_centre',
+        'titols_equivalents',
+    );
+
+    foreach ($llistes as $llista) {
+        $iid = csv_import_reader::get_new_iid('mod_fpdquadern');
+        $cir = new csv_import_reader($iid, 'mod_fpdquadern');
+        $content = file_get_contents(__DIR__ . '/db/' . $llista . '.csv');
+        $cir->load_csv_content($content, 'utf-8', 'comma');
+        $cir->init();
+
+        while ($row = $cir->next()) {
+            $record = (object) array(
+                'quadern_id' => $quadern_id,
+                'llista' => $llista,
+                'codi' => $row[0],
+                'nom' => $row[1],
+                'grup' => count($row) > 2 ? $row[2] : '',
+            );
+            $DB->insert_record('fpdquadern_llistes', $record);
+        }
+
+        $cir->close();
+        $cir->cleanup();
+    }
 }
