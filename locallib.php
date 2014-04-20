@@ -8,6 +8,7 @@
 
 namespace mod_fpdquadern;
 
+require_once($CFG->dirroot . '/lib/csvlib.class.php');
 require_once(__DIR__ . '/database.php');
 
 const N_FASES = 3;
@@ -702,6 +703,194 @@ class suprimir_competencia_view extends quadern_view {
         }
 
         echo $this->output->confirmacio_suprimir_competencia($competencia);
+    }
+}
+
+abstract class llista_view extends quadern_view {
+
+    protected $llista;
+
+    static $llistes = array(
+        'especialitats_docents' => array(
+            'nom' => "Especialitats docents",
+        ),
+        'titols_equivalents' => array(
+            'nom' => "Títols equivalents",
+            'grups' => true,
+        ),
+        'graus_assoliment' => array(
+            'nom' => "Grau d'assoliment",
+        ),
+        'tipus_centre' => array(
+            'nom' => "Tipus de centre",
+        ),
+    );
+
+    function __construct(array $urlparams=null) {
+        global $PAGE;
+
+        $this->llista = optional_param(
+            'llista', key(static::$llistes), PARAM_ALPHAEXT);
+        $urlparams['llista'] = $this->llista;
+
+        parent::__construct($urlparams);
+
+        if (!$this->es_admin()) {
+            print_error('nopermissiontoshow');
+        }
+
+        if (!isset(static::$llistes[$this->llista])) {
+            print_error('nopermissiontoshow');
+        }
+
+        $url = $this->url('veure_llista');
+        $PAGE->navbar->override_active_url($url);
+    }
+
+    function url_llista($accio, array $params=null) {
+        $params = $params ?: array();
+        $params['llista'] = $this->llista;
+        return $this->url($accio, $params);
+    }
+}
+
+class veure_llista_view extends llista_view {
+
+    function __construct() {
+        parent::__construct();
+        $grups = !empty(static::$llistes[$this->llista]['grups']);
+        echo $this->output->llista($this->llista, $grups);
+    }
+}
+
+class exportar_llista_view extends llista_view {
+
+    function __construct() {
+        parent::__construct();
+
+        $grups = !empty(static::$llistes[$this->llista]['grups']);
+        $csv = new \csv_export_writer('comma', '"', 'text/csv');
+        $csv->set_filename($this->llista);
+        if ($grups) {
+            $csv->add_data(array('Codi', 'Nom', 'Grup'));
+        }  else {
+            $csv->add_data(array('Codi', 'Nom'));
+        }
+        foreach ($this->quadern->elements_llista($this->llista) as $e) {
+            if ($grups) {
+                $csv->add_data(array($e->codi, $e->nom, $e->grup));
+            } else {
+                $csv->add_data(array($e->codi, $e->nom));
+            }
+        }
+        $csv->download_file();
+    }
+}
+
+class importar_llista_view extends llista_view {
+
+    function __construct() {
+        parent::__construct();
+
+        $grups = !empty(static::$llistes[$this->llista]['grups']);
+        $form = new importacio_llista_form($this);
+        $errors = array();
+
+        if ($form->is_cancelled()) {
+            redirect($this->url_llista('veure_llista'));
+        } else if ($data = $form->get_data()) {
+            $content = $form->get_file_content('file');
+            if ($rows = $this->llegir_csv($content, $errors)) {
+                $this->comprovar_csv($rows, $errors);
+            }
+            if (!$errors) {
+                $this->actualitzar_llista($rows, $grups);
+                redirect($this->url_llista('veure_llista'));
+            }
+        }
+
+        echo $this->output->importacio_llista(
+            $this->llista, $grups, $form, $errors);
+    }
+
+    private function actualitzar_llista($rows, $grups) {
+        $elements = array();
+        foreach ($this->quadern->elements_llista($this->llista) as $e) {
+            $elements[(int) $e->codi] = $e;
+        }
+
+        foreach ($rows as $row) {
+            $codi = (int) $row[0];
+            if (isset($elements[$codi])) {
+                $element = $elements[$codi];
+                unset($elements[$codi]);
+            } else {
+                $element = $this->database->create('element_llista', array(
+                    'quadern_id' => $this->quadern->id,
+                    'llista' => $this->llista,
+                    'codi' => $codi,
+                ));
+            }
+            $element->update(array(
+                'nom' => $row[1],
+                'grup' => $grups ? $row[2] : '',
+            ));
+            $element->save();
+        }
+
+        foreach ($elements as $element) {
+            $element->delete();
+        }
+    }
+
+    private function comprovar_csv($rows, array &$errors) {
+        $codis = array();
+
+        foreach ($rows as $i => $row) {
+            $n_fila = $i + 2;
+            $codi = (int) $row[0];
+
+            if ($row[0] !== (string) $codi) {
+                $errors[] = "Fila {$n_fila}: el codi no és un número.";
+            } elseif ($codi <= 0) {
+                $errors[] = "Fila {$n_fila}: el codi és zero o negatiu.";
+            } elseif (isset($codis[$codi])) {
+                $errors[] = ("Fila {$n_fila}: el codi és repetit, " .
+                             "ja s'utilitza a la fila {$codis[$codi]}.");
+            } else {
+                $codis[$codi] = $n_fila;
+            }
+
+            if (!$row[1]) {
+                $errors[] = "Fila {$n_fila}: el nom està en blanc.";
+            }
+        }
+    }
+
+    private function llegir_csv($content, array &$errors) {
+        $iid = \csv_import_reader::get_new_iid('mod_fpdquadern');
+        $cir = new \csv_import_reader($iid, 'mod_fpdquadern');
+
+        $datacount = $cir->load_csv_content($content, 'utf-8', 'comma');
+        if ($datacount === false) {
+            $errors[] = $cir->get_error();
+            return;
+        }
+
+        $rows = array();
+
+        $cir->init();
+        while ($row = $cir->next()) {
+            $row = array_map('trim', $row);
+            while (count($row) < 3) {
+                $row[] = '';
+            }
+            $rows[] = array_slice($row, 0, 3);
+        }
+        $cir->close();
+        $cir->cleanup();
+
+        return $rows;
     }
 }
 

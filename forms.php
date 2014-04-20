@@ -551,6 +551,15 @@ class competencia_form extends base_form {
     }
 }
 
+class importacio_llista_form extends base_form {
+
+    function definition() {
+        $this->_form->addElement(
+            'filepicker', 'file', '', null, array('accepted_types' => 'csv'));
+        $this->add_action_buttons(true, 'Importa');
+    }
+}
+
 class dades_alumne_form extends base_form {
 
     function definition() {

@@ -81,6 +81,10 @@
     margin: 0 50px 10px 0;
 }
 
+.mform.mod-fpdquadern-form .fitem.fitem_ffilepicker {
+    float: none;
+}
+
 .mform.mod-fpdquadern-form .fitem .fitemtitle {
     float: none;
     width: inherit;

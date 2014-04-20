@@ -364,6 +364,29 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         );
     }
 
+    function importacio_llista($llista, $grups, $form, array $errors) {
+        $o = '';
+
+        $text = ("El fixer ha de tenir format CSV, amb una coma (,) com a " .
+                 "delimitador de camp i cometes (\") com a delimitador de " .
+                 "text (les opcions predetermiades del LibreOffice Calc en " .
+                 "desar en format CSV).");
+        $o .= html_writer::tag('p', $text);
+
+        if ($errors) {
+            $o .= html_writer::tag(
+                'h3', "S'han trobat errors en importar el fitxer");
+            $o .= html_writer::start_tag('ul');
+            foreach ($errors as $error) {
+                $o .= html_writer::tag('li', s($error));
+            }
+            $o .= html_writer::end_tag('ul');
+        }
+
+        $o .= $this->moodleform($form);
+        return $this->pagina_llista($llista, 'importar', $o);
+    }
+
     function index_activitats() {
         $table = new html_table();
         $table->attributes['class'] = 'generaltable mod-fpdquadern-activitats';
@@ -514,6 +537,31 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         $o .= html_writer::table($table);
 
         return $this->pagina($o);
+    }
+
+    function llista($llista, $grups) {
+        $o = '';
+
+        $table = new html_table();
+        $table->attributes['class'] = 'generaltable mod-fpdquadern-llista';
+        $table->head = array('Codi', 'Nom');
+        $table->align = array('left', 'left', 'left');
+
+        if ($grups) {
+            $table->head[] = 'Grup';
+        }
+
+        foreach ($this->controller->quadern->elements_llista($llista) as $e) {
+            $row = array($e->codi, $e->nom);
+            if ($grups) {
+                $row[] = $e->grup;
+            }
+            $table->data[] = $row;
+        }
+
+        $o .= html_writer::table($table);
+
+        return $this->pagina_llista($llista, 'veure_llista', $o);
     }
 
     function pagina_accions_pendents($rol, $accions) {
@@ -722,4 +770,24 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         return $this->pagina(
             $user . $tabtree . $content, $this->controller->alumne->alumne_id);
     }
+
+    private function pagina_llista($llista, $subtab, $content) {
+        $tabs = array();
+
+        foreach (mod_fpdquadern\veure_llista_view::$llistes as $k => $v) {
+            $url = $this->controller->url('veure_llista', array('llista' => $k));
+            $tabs[] = $t = new tabobject($k, $url, $v['nom']);
+            if ($k == $llista) {
+                $t->subtree[] = new tabobject('veure_llista', $url, "Llista");
+                $url = $this->controller->url('exportar_llista', array('llista' => $k));
+                $t->subtree[] = new tabobject('exportar', $url, "Exporta");
+                $url = $this->controller->url('importar_llista', array('llista' => $k));
+                $t->subtree[] = new tabobject('importar', $url, "Importa");
+            }
+        }
+
+        $tabtree = $this->tabtree($tabs, $subtab ?: $llista);
+        return $this->pagina($tabtree . $content);
+    }
+
 }

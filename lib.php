@@ -85,6 +85,10 @@ function fpdquadern_extend_settings_navigation($settings, $node) {
     $url = new \moodle_url($url);
     $url->param('accio', 'veure_competencies');
     $node->add('Competències', $url, navigation_node::TYPE_SETTING);
+
+    $url = new \moodle_url($url);
+    $url->param('accio', 'veure_llista');
+    $node->add('Llistes desplegables', $url, navigation_node::TYPE_SETTING);
 }
 
 function fpdquadern_get_user_grades($quadern, $userid=0) {
@@ -276,16 +280,10 @@ function fpdquadern_pluginfile(
 function fpdquadern_crear_llistes_predeterminades($quadern_id) {
     global $CFG, $DB;
 
+    require_once(__DIR__ . '/locallib.php');
     require_once($CFG->libdir . '/csvlib.class.php');
 
-    $llistes = array(
-        'especialitats_docents',
-        'graus_assoliment',
-        'tipus_centre',
-        'titols_equivalents',
-    );
-
-    foreach ($llistes as $llista) {
+    foreach (array_keys(mod_fpdquadern\llista_view::$llistes) as $llista) {
         $iid = csv_import_reader::get_new_iid('mod_fpdquadern');
         $cir = new csv_import_reader($iid, 'mod_fpdquadern');
         $content = file_get_contents(__DIR__ . '/db/' . $llista . '.csv');
