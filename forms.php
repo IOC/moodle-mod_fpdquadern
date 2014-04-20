@@ -19,6 +19,7 @@ abstract class base_form extends \moodleform {
 
     private $filters = array();
     private $editors = array();
+    private $filemanagers = array();
 
     function __construct($controller, $editable=false) {
         global $PAGE;
@@ -51,6 +52,12 @@ abstract class base_form extends \moodleform {
                 $editor['draftitemid'], $PAGE->context->id,
                 'mod_fpdquadern', $editor['filearea'], $id ?: $data->id,
                 null, $data->{$editor['name']}
+            );
+        }
+        foreach ($this->filemanagers as $filemanager) {
+            file_save_draft_area_files(
+                $filemanager['draftitemid'], $PAGE->context->id,
+                'mod_fpdquadern', $filemanager['filearea'], $id ?: $data->id
             );
         }
     }
@@ -164,6 +171,42 @@ abstract class base_form extends \moodleform {
                     $this->output->data($dataedicio, 'datetime', $limitedicio));
             }
             $this->add_element_static('', $label, $html);
+        }
+    }
+
+    protected function add_element_filemanager($name, $label, $filearea, $itemid, $static=false) {
+        global $PAGE;
+
+        if ($this->editable and !$static) {
+            $draftitemid = file_get_submitted_draft_itemid($name);
+            file_prepare_draft_area(
+                $draftitemid, $PAGE->context->id, 'mod_fpdquadern',
+                $filearea, $itemid, null);
+            $this->_form->addElement(
+                'filemanager', $name, $label, null,
+                array('maxfiles' => 1, 'subdirs' => false));
+            $this->_form->setDefault($name, $draftitemid);
+            $this->filemanagers[] = array(
+                'name' => $name,
+                'draftitemid' => $draftitemid,
+                'filearea' => $filearea,
+            );
+
+        } else {
+            $html = '';
+            $files = get_file_storage()->get_area_files(
+                $PAGE->context->id, 'mod_fpdquadern', $filearea, $itemid);
+            foreach ($files as $file) {
+                if (!$file->is_directory()) {
+                    $url = \moodle_url::make_pluginfile_url(
+                        $file->get_contextid(), $file->get_component(), $file->get_filearea(),
+                        $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+                    $html .= \html_writer::link($url, $file->get_filename()) . '<br/>';
+                }
+            }
+            if ($html) {
+                $this->add_element_static('', $label, $html);
+            }
         }
     }
 
@@ -555,7 +598,7 @@ class importacio_llista_form extends base_form {
 
     function definition() {
         $this->_form->addElement(
-            'filepicker', 'file', '', null, array('accepted_types' => 'csv'));
+            'filepicker', 'file', '', null, array('accepted_types' => 'text/csv'));
         $this->add_action_buttons(true, 'Importa');
     }
 }
@@ -582,6 +625,11 @@ class dades_alumne_form extends base_form {
         $this->add_element_select(
             'alumne_titol', 'Títol equivalent', $alumne->alumne_titol,
             $this->options_llista('titols_equivalents', $alumne->alumne_titol));
+        if ($this->controller->permis_veure_quadern_anterior()) {
+            $this->add_element_filemanager(
+                'quadern_anterior', 'Quadern anterior',
+                'quadern_anterior', $alumne->alumne_id);
+        }
         $this->add_element_validat(
             'alumne_validat', $alumne->alumne_validat,
             $this->controller->permis_validar_dades());

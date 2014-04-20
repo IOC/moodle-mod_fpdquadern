@@ -455,6 +455,10 @@ class alumne_controller extends quadern_controller {
         return $this->es_admin() or $this->es_professor();
     }
 
+    function permis_veure_quadern_anterior() {
+        return $this->es_admin() or $this->es_professor();
+    }
+
     function permis_veure_totes_accions_pendents() {
         return $this->es_admin() or $this->es_professor() or $this->es_tutor();
     }
@@ -979,6 +983,7 @@ abstract class editar_dades_view extends alumne_view {
         if ($form->is_cancelled()) {
             redirect($this->url_alumne('veure_dades'));
         } else if ($data = $form->get_data()) {
+            $form->save_files($data, $this->alumne->alumne_id);
             $this->alumne->update((array) $data);
             $this->alumne->save();
             $this->avisar_professor();
