@@ -230,7 +230,9 @@ function fpdquadern_reset_userdata($data) {
 function fpdquadern_pluginfile(
     $course, $cm, $context, $filearea, $args, $forcedownload, $options=array()
 ) {
-    global $DB, $USER;
+    global $CFG, $DB, $USER;
+
+    require_once(__DIR__ . '/locallib.php');
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
@@ -242,25 +244,20 @@ function fpdquadern_pluginfile(
     $filename = array_pop($args);
     $filepath = $args ? '/'. implode('/', $args) .'/' : '/';
 
-    if ($filearea == 'valoracio_activitat_alumne'
-        or $filearea == 'valoracio_activitat_tutor'
+    if ($filearea == 'valoracio_activitat_tutor'
         or $filearea == 'valoracio_activitat_professor') {
-
         $conditions = array('id' => $itemid);
         $alumne_id = $DB->get_field(
             'fpdquadern_alumne_activitats', 'alumne_id', $conditions);
+        $controller = new mod_fpdquadern\alumne_controller($cm, $alumne_id);
+        if (!$controller->permis()) {
+            return false;
+        }
+    }
 
-        $conditions = array(
-            'quadern_id' => $cm->instance,
-            'alumne_id' => $alumne_id,
-        );
-        $alumne = $DB->get_record(
-            'fpdquadern_alumne', $conditions, '*', MUST_EXIST);
-
-        if (!has_capability('mod/fpdquadern:admin', $context) and
-            $alumne->alumne_id != $USER->id and
-            $alumne->professor_id != $USER->id and
-            $alumne->tutor_id != $USER->id) {
+    if ($filearea == 'quadern_anterior') {
+        $controller = new mod_fpdquadern\alumne_controller($cm, $itemid);
+        if (!$controller->permis_veure_quadern_anterior()) {
             return false;
         }
     }
