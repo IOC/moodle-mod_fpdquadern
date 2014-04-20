@@ -196,22 +196,28 @@ function fpdquadern_reset_userdata($data) {
     $quaderns = $DB->get_records('fpdquadern', array('course' => $data->courseid));
 
     foreach ($quaderns as $id => $quadern) {
+        $fs = get_file_storage();
+        $cm = get_coursemodule_from_instance('fpdquadern', $id, $data->courseid, false, MUST_EXIST);
+        $context = context_module::instance($cm->id);
+
+        $fs->delete_area_files($context->id, 'mod_fpdquadern', 'quadern_anterior');
+        $fs->delete_area_files($context->id, 'mod_fpdquadern', 'valoracio_activitat_professor');
+        $fs->delete_area_files($context->id, 'mod_fpdquadern', 'valoracio_activitat_tutor');
+
+        $rs = $DB->get_recordset_select(
+            'fpdquadern_activitats', 'quadern_id = :id AND alumne_id != 0',
+            array('id' => $id), '', 'id');
+        foreach ($rs as $id => $record) {
+            $fs->delete_area_files($context->id, 'mod_fpdquadern', 'descripcio_activitat', $id);
+        }
+        $rs->close();
+
         $DB->delete_records('fpdquadern_alumne', array('quadern_id' => $id));
         $DB->delete_records('fpdquadern_alumne_activitats', array('quadern_id' => $id));
         $DB->delete_records('fpdquadern_alumne_fases', array('quadern_id' => $id));
         $DB->delete_records('fpdquadern_alumne_seguiment', array('quadern_id' => $id));
-        $select = 'quadern_id = :id AND alumne_id != 0';
-        $DB->delete_records_select('fpdquadern_activitats', $select, array('id' => $id));
-
-        $cm = get_coursemodule_from_instance('fpdquadern', $id, $data->courseid, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-
-        $fs = get_file_storage();
-        foreach (array('alumne', 'professor', 'tutor') as $rol) {
-            $fs->delete_area_files(
-                $context->id, 'mod_fpdquadern', "valoracio_activitat_$rol"
-            );
-        }
+        $DB->delete_records_select(
+            'fpdquadern_activitats', 'quadern_id = :id AND alumne_id != 0', array('id' => $id));
 
         if (empty($data->reset_gradebook_grades)) {
             fpdquadern_grade_item_update($quadern, 'reset');
