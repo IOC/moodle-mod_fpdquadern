@@ -363,7 +363,7 @@ class element_llista extends model {
 
 class alumne extends model {
 
-    static $table = 'fpdquadern_alumne';
+    static $table = 'fpdquadern_alumnes';
 
     static $fields = array(
         'quadern_id' => null,
@@ -400,7 +400,7 @@ class alumne extends model {
         $select = 'quadern_id=? AND fase=? AND ' .
             '(alumne_id=? OR alumne_id=0 AND id IN ( ' .
             'SELECT activitat_id ' .
-            'FROM {fpdquadern_alumne_activitats} a ' .
+            'FROM {' . valoracio::$table . '} a ' .
             'WHERE quadern_id=? AND alumne_id=?))';
         $params = array(
             $this->quadern_id,
@@ -512,7 +512,7 @@ class alumne extends model {
 
 class fase extends model {
 
-    static $table = 'fpdquadern_alumne_fases';
+    static $table = 'fpdquadern_fases';
 
     static $fields = array(
         'quadern_id' => null,
@@ -535,7 +535,7 @@ class fase extends model {
 
 class valoracio extends model {
 
-    static $table = 'fpdquadern_alumne_activitats';
+    static $table = 'fpdquadern_valoracions';
 
     static $fields = array(
         'quadern_id' => null,
@@ -575,7 +575,7 @@ class valoracio extends model {
 
 class avaluacio extends model {
 
-    static $table = 'fpdquadern_alumne_competenci';
+    static $table = 'fpdquadern_avaluacions';
 
     static $fields = array(
         'quadern_id' => null,
@@ -589,7 +589,7 @@ class avaluacio extends model {
 
 class seguiment extends model {
 
-    static $table = 'fpdquadern_alumne_seguiment';
+    static $table = 'fpdquadern_seguiment';
 
     static $fields = array(
         'quadern_id' => null,

@@ -47,21 +47,22 @@ function fpdquadern_delete_instance($id) {
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'mod_fpdquadern');
 
+    $DB->delete_records('fpdquadern', array('id'=> $id));
     $DB->delete_records('fpdquadern_activitats', array('quadern_id' => $id));
-    $DB->delete_records('fpdquadern_alumne', array('quadern_id' => $id));
-    $DB->delete_records('fpdquadern_alumne_activitats', array('quadern_id' => $id));
-    $DB->delete_records('fpdquadern_alumne_competenci', array('quadern_id' => $id));
-    $DB->delete_records('fpdquadern_alumne_fases', array('quadern_id' => $id));
-    $DB->delete_records('fpdquadern_alumne_seguiment', array('quadern_id' => $id));
     $DB->delete_records('fpdquadern_competencies', array('quadern_id' => $id));
     $DB->delete_records('fpdquadern_llistes', array('quadern_id' => $id));
-    $DB->delete_records('fpdquadern', array('id'=> $quadern->id));
+    $DB->delete_records('fpdquadern_alumnes', array('quadern_id' => $id));
+    $DB->delete_records('fpdquadern_fases', array('quadern_id' => $id));
+    $DB->delete_records('fpdquadern_seguiment', array('quadern_id' => $id));
+    $DB->delete_records('fpdquadern_valoracions', array('quadern_id' => $id));
+    $DB->delete_records('fpdquadern_avaluacions', array('quadern_id' => $id));
 
     return true;
 }
 
 function fpdquadern_supports($feature) {
     switch($feature) {
+        case FEATURE_BACKUP_MOODLE2: true;
         case FEATURE_GRADE_HAS_GRADE: return true;
         case FEATURE_GROUPS: return true;
         case FEATURE_MOD_INTRO: return true;
@@ -101,7 +102,7 @@ function fpdquadern_get_user_grades($quadern, $userid=0) {
         $params['alumne_id'] = $userid;
     }
 
-    $records = $DB->get_records('fpdquadern_alumne', $params);
+    $records = $DB->get_records('fpdquadern_alumnes', $params);
     foreach ($records as $record) {
         $grades[$record->alumne_id] = (object) array(
             'userid' => $record->alumne_id,
@@ -212,10 +213,11 @@ function fpdquadern_reset_userdata($data) {
         }
         $rs->close();
 
-        $DB->delete_records('fpdquadern_alumne', array('quadern_id' => $id));
-        $DB->delete_records('fpdquadern_alumne_activitats', array('quadern_id' => $id));
-        $DB->delete_records('fpdquadern_alumne_fases', array('quadern_id' => $id));
-        $DB->delete_records('fpdquadern_alumne_seguiment', array('quadern_id' => $id));
+        $DB->delete_records('fpdquadern_alumnes', array('quadern_id' => $id));
+        $DB->delete_records('fpdquadern_fases', array('quadern_id' => $id));
+        $DB->delete_records('fpdquadern_seguiment', array('quadern_id' => $id));
+        $DB->delete_records('fpdquadern_valoracions', array('quadern_id' => $id));
+        $DB->delete_records('fpdquadern_avaluacions', array('quadern_id' => $id));
         $DB->delete_records_select(
             'fpdquadern_activitats', 'quadern_id = :id AND alumne_id != 0', array('id' => $id));
 
@@ -254,7 +256,7 @@ function fpdquadern_pluginfile(
         or $filearea == 'valoracio_activitat_professor') {
         $conditions = array('id' => $itemid);
         $alumne_id = $DB->get_field(
-            'fpdquadern_alumne_activitats', 'alumne_id', $conditions);
+            'fpdquadern_valoracions', 'alumne_id', $conditions);
         $controller = new mod_fpdquadern\alumne_controller($cm, $alumne_id);
         if (!$controller->permis()) {
             return false;

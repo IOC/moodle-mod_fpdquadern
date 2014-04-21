@@ -187,5 +187,22 @@ function xmldb_fpdquadern_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014042100, 'fpdquadern');
     }
 
+    if ($oldversion < 2014042101) {
+        $renames = array(
+            'fpdquadern_alumne' => 'fpdquadern_alumnes',
+            'fpdquadern_alumne_activitats' => 'fpdquadern_valoracions',
+            'fpdquadern_alumne_competenci' => 'fpdquadern_avaluacions',
+            'fpdquadern_alumne_fases' => 'fpdquadern_fases',
+            'fpdquadern_alumne_seguiment' => 'fpdquadern_seguiment',
+        );
+        foreach ($renames as $oldname => $newname) {
+            $table = new xmldb_table($oldname);
+            if ($dbman->table_exists($table)) {
+                $dbman->rename_table($table, $newname);
+            }
+        }
+        upgrade_mod_savepoint(true, 2014042101, 'fpdquadern');
+    }
+
     return true;
 }

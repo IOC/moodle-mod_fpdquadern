@@ -571,7 +571,7 @@ class alumne_test extends base_model_test {
         $select = 'quadern_id=? AND fase=? AND ' .
             '(alumne_id=? OR alumne_id=0 AND id IN ( ' .
             'SELECT activitat_id ' .
-            'FROM {fpdquadern_alumne_activitats} a ' .
+            'FROM {' . valoracio::$table . '} a ' .
             'WHERE quadern_id=? AND alumne_id=?))';
         $params = array(
              $this->alumne->quadern_id,

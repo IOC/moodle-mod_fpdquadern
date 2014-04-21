@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<XMLDB PATH="mod/fpdquadern/db" VERSION="20140418" COMMENT="-" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+<XMLDB PATH="mod/fpdquadern/db" VERSION="20140421" COMMENT="-" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
   <TABLES>
     <TABLE NAME="fpdquadern" COMMENT="-">
       <FIELDS>
@@ -49,7 +49,37 @@
         <INDEX NAME="quadern_alumne_fase" UNIQUE="false" FIELDS="quadern_id, alumne_id, fase"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="fpdquadern_alumne" COMMENT="-">
+    <TABLE NAME="fpdquadern_competencies" COMMENT="-">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="quadern_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="codi" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="descripcio" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="quadern_id" UNIQUE="false" FIELDS="quadern_id"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="fpdquadern_llistes" COMMENT="-">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="quadern_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="llista" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="codi" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="nom" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grup" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="quadern_llista_codi" UNIQUE="true" FIELDS="quadern_id, llista, codi"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="fpdquadern_alumnes" COMMENT="-">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="quadern_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -90,47 +120,7 @@
         <INDEX NAME="quadern_tutor" UNIQUE="false" FIELDS="quadern_id, tutor_id"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="fpdquadern_alumne_activitats" COMMENT="-">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="quadern_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="alumne_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="activitat_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="valoracio_tutor" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="format_valoracio_tutor" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="valoracio_professor" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="format_valoracio_professor" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="data_valoracio_professor" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="data_valoracio_tutor" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="valoracio_validada" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="quadern_alumne_activitat" UNIQUE="true" FIELDS="quadern_id, alumne_id, activitat_id"/>
-        <INDEX NAME="quadern_activitat" UNIQUE="false" FIELDS="quadern_id, activitat_id"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="fpdquadern_alumne_competenci" COMMENT="-">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="quadern_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="alumne_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="activitat_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="competencia_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="avaluacio_professor" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="avaluacio_tutor" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="quadern_alumne_activitat" UNIQUE="false" FIELDS="quadern_id, alumne_id, activitat_id"/>
-        <INDEX NAME="quadern_competencia" UNIQUE="false" FIELDS="quadern_id, competencia_id"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="fpdquadern_alumne_fases" COMMENT="-">
+    <TABLE NAME="fpdquadern_fases" COMMENT="-">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="quadern_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -150,7 +140,7 @@
         <INDEX NAME="quadern_alumne_fase" UNIQUE="true" FIELDS="quadern_id, alumne_id, fase"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="fpdquadern_alumne_seguiment" COMMENT="-">
+    <TABLE NAME="fpdquadern_seguiment" COMMENT="-">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="quadern_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -172,34 +162,44 @@
         <INDEX NAME="quadern_alumne_fase_data" UNIQUE="true" FIELDS="quadern_id, alumne_id, fase, data"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="fpdquadern_competencies" COMMENT="-">
+    <TABLE NAME="fpdquadern_valoracions" COMMENT="-">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="quadern_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="codi" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="descripcio" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="alumne_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="activitat_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="valoracio_tutor" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="format_valoracio_tutor" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="valoracio_professor" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="format_valoracio_professor" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="data_valoracio_professor" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="data_valoracio_tutor" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="valoracio_validada" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="quadern_id" UNIQUE="false" FIELDS="quadern_id"/>
+        <INDEX NAME="quadern_alumne_activitat" UNIQUE="true" FIELDS="quadern_id, alumne_id, activitat_id"/>
+        <INDEX NAME="quadern_activitat" UNIQUE="false" FIELDS="quadern_id, activitat_id"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="fpdquadern_llistes" COMMENT="-">
+    <TABLE NAME="fpdquadern_avaluacions" COMMENT="-">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="quadern_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="llista" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="codi" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="nom" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="grup" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="alumne_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="activitat_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="competencia_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="avaluacio_professor" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="avaluacio_tutor" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="quadern_llista_codi" UNIQUE="true" FIELDS="quadern_id, llista, codi"/>
+        <INDEX NAME="quadern_alumne_activitat" UNIQUE="false" FIELDS="quadern_id, alumne_id, activitat_id"/>
+        <INDEX NAME="quadern_competencia" UNIQUE="false" FIELDS="quadern_id, competencia_id"/>
       </INDEXES>
     </TABLE>
   </TABLES>
