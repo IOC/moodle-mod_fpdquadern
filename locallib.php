@@ -983,7 +983,7 @@ abstract class editar_dades_view extends alumne_view {
         if ($form->is_cancelled()) {
             redirect($this->url_alumne('veure_dades'));
         } else if ($data = $form->get_data()) {
-            $form->save_files($data, $this->alumne->alumne_id);
+            $form->save_files($data, $this->alumne->id);
             $this->alumne->update((array) $data);
             $this->alumne->save();
             $this->avisar_professor();

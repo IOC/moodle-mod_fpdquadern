@@ -254,9 +254,8 @@ function fpdquadern_pluginfile(
 
     if ($filearea == 'valoracio_activitat_tutor'
         or $filearea == 'valoracio_activitat_professor') {
-        $conditions = array('id' => $itemid);
         $alumne_id = $DB->get_field(
-            'fpdquadern_valoracions', 'alumne_id', $conditions);
+            'fpdquadern_valoracions', 'alumne_id', array('id' => $itemid));
         $controller = new mod_fpdquadern\alumne_controller($cm, $alumne_id);
         if (!$controller->permis()) {
             return false;
@@ -264,7 +263,9 @@ function fpdquadern_pluginfile(
     }
 
     if ($filearea == 'quadern_anterior') {
-        $controller = new mod_fpdquadern\alumne_controller($cm, $itemid);
+        $alumne_id = $DB->get_field(
+            'fpdquadern_alumnes', 'alumne_id', array('id' => $itemid));
+        $controller = new mod_fpdquadern\alumne_controller($cm, $alumne_id);
         if (!$controller->permis_veure_quadern_anterior()) {
             return false;
         }

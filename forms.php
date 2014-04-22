@@ -45,19 +45,19 @@ abstract class base_form extends \moodleform {
         return $data;
     }
 
-    function save_files($data, $id=false) {
+    function save_files($data, $id=null) {
         global $PAGE;
         foreach ($this->editors as $editor) {
             $data->{$editor['name']} = file_save_draft_area_files(
                 $editor['draftitemid'], $PAGE->context->id,
-                'mod_fpdquadern', $editor['filearea'], $id ?: $data->id,
+                'mod_fpdquadern', $editor['filearea'], $id,
                 null, $data->{$editor['name']}
             );
         }
         foreach ($this->filemanagers as $filemanager) {
             file_save_draft_area_files(
                 $filemanager['draftitemid'], $PAGE->context->id,
-                'mod_fpdquadern', $filemanager['filearea'], $id ?: $data->id
+                'mod_fpdquadern', $filemanager['filearea'], $id
             );
         }
     }
@@ -628,7 +628,7 @@ class dades_alumne_form extends base_form {
         if ($this->controller->permis_veure_quadern_anterior()) {
             $this->add_element_filemanager(
                 'quadern_anterior', 'Quadern anterior',
-                'quadern_anterior', $alumne->alumne_id);
+                'quadern_anterior', $alumne->id);
         }
         $this->add_element_validat(
             'alumne_validat', $alumne->alumne_validat,
