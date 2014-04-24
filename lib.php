@@ -289,7 +289,7 @@ function fpdquadern_crear_llistes_predeterminades($quadern_id) {
     require_once(__DIR__ . '/locallib.php');
     require_once($CFG->libdir . '/csvlib.class.php');
 
-    foreach (array_keys(mod_fpdquadern\llista_view::$llistes) as $llista) {
+    foreach (array_keys(mod_fpdquadern\llista_view::$LLISTES) as $llista) {
         $iid = csv_import_reader::get_new_iid('mod_fpdquadern');
         $cir = new csv_import_reader($iid, 'mod_fpdquadern');
         $content = file_get_contents(__DIR__ . '/db/' . $llista . '.csv');

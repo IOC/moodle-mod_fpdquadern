@@ -451,11 +451,6 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         $table->align = array('left', 'left', 'left', 'left', 'center', 'center');
 
 
-        $especialitats = array(0 => '');
-        foreach ($this->controller->quadern->elements_llista('especialitats_docents') as $e) {
-            $especialitats[(int) $e->codi] = $e->nom;
-        }
-
         $date = usergetdate(time());
         $today = make_timestamp($date['year'], $date['mon'], $date['mday']);
 
@@ -482,15 +477,10 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
                 }
             }
 
-            if (isset($especialitats[$alumne->alumne_especialitat])) {
-                $especialitat = $especialitats[$alumne->alumne_especialitat];
-            } else {
-                $especialitat = "{$alumne->alumne_especialitat}";
-            }
-
             $table->data[] = array(
                 $this->output->action_link($url, fullname($user)) . $avis,
-                $especialitat,
+                $this->nom_element_llista(
+                    'especialitats_docents', $alumne->alumne_especialitat),
                 $alumne->centre_nom,
                 $fase ? "Fase $fase" : '',
                 $this->data($inici, 'datefullshort'),
@@ -562,6 +552,17 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         $o .= html_writer::table($table);
 
         return $this->pagina_llista($llista, 'veure_llista', $o);
+    }
+
+    function nom_element_llista($llista, $codi) {
+        $elements = $this->controller->llista($llista);
+        if (!$codi) {
+            return '';
+        } else if (isset($elements[$codi])) {
+            return s($elements[$codi]->nom);
+        } else {
+            return s("$codi");
+        }
     }
 
     function pagina_accions_pendents($rol, $accions) {
@@ -774,7 +775,7 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
     private function pagina_llista($llista, $subtab, $content) {
         $tabs = array();
 
-        foreach (mod_fpdquadern\veure_llista_view::$llistes as $k => $v) {
+        foreach (mod_fpdquadern\veure_llista_view::$LLISTES as $k => $v) {
             $url = $this->controller->url('veure_llista', array('llista' => $k));
             $tabs[] = $t = new tabobject($k, $url, $v['nom']);
             if ($k == $llista) {

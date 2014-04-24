@@ -406,14 +406,10 @@ abstract class base_form extends \moodleform {
     }
 
     protected function options_llista($llista, $value=false) {
-        static $elements = array();
-        if (!isset($elements[$llista])) {
-            $elements[$llista] = $this->controller->quadern->elements_llista($llista);
-        }
         $options = array('' => array(0 => ''));
         $value_found = false;
-        foreach ($elements[$llista] as $e) {
-            $options[$e->grup][(int) $e->codi] = $e->nom;
+        foreach ($this->controller->llista($llista) as $e) {
+            $options[$e->grup][$e->codi] = $e->nom;
             if ($e->codi == $value) {
                 $value_found = true;
             }

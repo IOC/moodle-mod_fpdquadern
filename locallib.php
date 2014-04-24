@@ -21,6 +21,7 @@ class quadern_controller {
     public $quadern;
 
     protected $database;
+    protected $llistes;
 
     function __construct($cm) {
         global $DB, $PAGE;
@@ -122,6 +123,16 @@ class quadern_controller {
             'id,firstname,lastname,email,picture,imagealt');
 
         return array($alumnes, $users, $groups);
+    }
+
+    function llista($llista) {
+        if (!isset($this->llistes[$llista])) {
+            $this->llistes[$llista] = array();
+            foreach ($this->quadern->elements_llista($llista) as $e) {
+                $this->llistes[$llista][(int) $e->codi] = $e;
+            }
+        }
+        return $this->llistes[$llista];
     }
 
     function permis() {
@@ -714,7 +725,7 @@ abstract class llista_view extends quadern_view {
 
     protected $llista;
 
-    static $llistes = array(
+    static $LLISTES = array(
         'especialitats_docents' => array(
             'nom' => "Especialitats docents",
         ),
@@ -734,7 +745,7 @@ abstract class llista_view extends quadern_view {
         global $PAGE;
 
         $this->llista = optional_param(
-            'llista', key(static::$llistes), PARAM_ALPHAEXT);
+            'llista', key(static::$LLISTES), PARAM_ALPHAEXT);
         $urlparams['llista'] = $this->llista;
 
         parent::__construct($urlparams);
@@ -743,7 +754,7 @@ abstract class llista_view extends quadern_view {
             print_error('nopermissiontoshow');
         }
 
-        if (!isset(static::$llistes[$this->llista])) {
+        if (!isset(static::$LLISTES[$this->llista])) {
             print_error('nopermissiontoshow');
         }
 
@@ -762,7 +773,7 @@ class veure_llista_view extends llista_view {
 
     function __construct() {
         parent::__construct();
-        $grups = !empty(static::$llistes[$this->llista]['grups']);
+        $grups = !empty(static::$LLISTES[$this->llista]['grups']);
         echo $this->output->llista($this->llista, $grups);
     }
 }
@@ -772,7 +783,7 @@ class exportar_llista_view extends llista_view {
     function __construct() {
         parent::__construct();
 
-        $grups = !empty(static::$llistes[$this->llista]['grups']);
+        $grups = !empty(static::$LLISTES[$this->llista]['grups']);
         $csv = new \csv_export_writer('comma', '"', 'text/csv');
         $csv->set_filename($this->llista);
         if ($grups) {
@@ -796,7 +807,7 @@ class importar_llista_view extends llista_view {
     function __construct() {
         parent::__construct();
 
-        $grups = !empty(static::$llistes[$this->llista]['grups']);
+        $grups = !empty(static::$LLISTES[$this->llista]['grups']);
         $form = new importacio_llista_form($this);
         $errors = array();
 
