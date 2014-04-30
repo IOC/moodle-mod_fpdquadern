@@ -27,10 +27,20 @@
     text-align: center;
 }
 
-.mod-fpdquadern-alumne a {
+.mod-fpdquadern-alumne > a {
     display: inline-block;
     vertical-align: middle;
     margin: 5px;
+}
+
+.mod-fpdquadern-alumne-exportar {
+    float: right;
+    margin: 15px;
+}
+
+.mod-fpdquadern-alumne-exportar img {
+    vertical-align: middle;
+    margin-bottom: 2px;
 }
 
 .mod-fpdquadern-columna-text {

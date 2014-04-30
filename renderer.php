@@ -127,17 +127,9 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
                 $accions[] = $this->icona('t/delete', 'Suprimeix', $url_suprimir);
             }
 
-            $hores = array();
-            for ($i = 1; $i <= 3; $i++) {
-                if ($dia->{"de$i"} !== null and $dia->{"a$i"} !== null) {
-                    $hores[] = $this->hores($dia->{"de$i"}) .
-                        ' - ' . $this->hores($dia->{"a$i"});
-                }
-            }
-
             $table->data[] = array(
                 $this->data($dia->data),
-                implode('<br/>', $hores),
+                $this->hores_dia_seguiment($dia),
                 $validat,
                 implode(' ', $accions),
             );
@@ -289,6 +281,22 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         }
     }
 
+    function estat_activitat($activitat) {
+        if (!$activitat->complementaria()) {
+            return '';
+        }
+
+        if (!$activitat->validada and !$activitat->acceptada) {
+            return "proposada";
+        } else if (!$activitat->validada) {
+            return "pendent de la validació del professor";
+        } else if (!$activitat->acceptada) {
+            return "pendent de l'acceptació del tutor";
+        } else {
+            return "complementària";
+        }
+    }
+
     function formulari_activitat($form) {
         return $this->pagina(
             $this->heading('Activitat') . $this->moodleform($form));
@@ -353,6 +361,17 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         $o = $this->heading(s($activitat->codi) . ' ' .  s($activitat->titol));
         $o .= $this->moodleform($form);
         return $this->pagina_alumne('activitats', $activitat->fase, $o);
+    }
+
+    function hores_dia_seguiment($dia) {
+        $hores = array();
+        for ($i = 1; $i <= 3; $i++) {
+            if ($dia->{"de$i"} !== null and $dia->{"a$i"} !== null) {
+                $hores[] = $this->hores($dia->{"de$i"}) .
+                    ' - ' . $this->hores($dia->{"a$i"});
+            }
+        }
+        return implode('<br/>', $hores);
     }
 
     function icona_descripcio_activitat($activitat) {
@@ -591,16 +610,8 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
         $titol = s($activitat->codi) . ' ' . s($activitat->titol);
         $descripcio = $this->descripcio_activitat($activitat);
 
-        if ($activitat->complementaria()) {
-            if (!$activitat->validada and !$activitat->acceptada) {
-                $estat = "proposada";
-            } else if (!$activitat->validada) {
-                $estat = "pendent de la validació del professor";
-            } else if (!$activitat->acceptada) {
-                $estat = "pendent de l'acceptació del tutor";
-            } else {
-                $estat = "complementària";
-            }
+        $estat = $this->estat_activitat($activitat);
+        if ($estat) {
             $class = 'mod-fpdquadern-activitat-estat';
             $titol .= ' ' . html_writer::span("($estat)", $class) . ' ';
         }
@@ -724,8 +735,15 @@ class mod_fpdquadern_renderer extends plugin_renderer_base {
                     'course' => $this->page->course->id,
                 )),
                 fullname($alumne)
+            ) .
+            html_writer::div(
+                $this->output->action_link(
+                    $this->controller->url_alumne('exportar_alumne'),
+                    $this->pix_icon('f/pdf', '') . ' Exporta en PDF'
+                ),
+                'mod-fpdquadern-alumne-exportar'
             ),
-            'mod-fpdquadern-alumne'
+            'mod-fpdquadern-alumne clearfix'
         );
 
         $tabs = array();

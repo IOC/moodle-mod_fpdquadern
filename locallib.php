@@ -9,7 +9,9 @@
 namespace mod_fpdquadern;
 
 require_once($CFG->dirroot . '/lib/csvlib.class.php');
+
 require_once(__DIR__ . '/database.php');
+require_once(__DIR__ . '/exporter.php');
 
 const N_FASES = 3;
 
@@ -1556,4 +1558,16 @@ class veure_accions_pendents_view extends alumne_view {
         echo $this->output->pagina_accions_pendents(
             $rol, $this->accions_pendents());
     }
+}
+
+
+class exportar_alumne_view extends alumne_view {
+
+    function __construct() {
+        global $COURSE, $USER;
+
+        parent::__construct();
+        new exporter($this);
+    }
+
 }
