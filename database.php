@@ -181,6 +181,13 @@ class user extends model {
     );
 }
 
+// Compatibilitat amb Moodle 2.6
+if (function_exists('get_all_user_name_fields')) {
+    foreach (get_all_user_name_fields() as $field) {
+        user::$fields[$field] = null;
+    }
+}
+
 class quadern extends model {
 
     static $table = 'fpdquadern';

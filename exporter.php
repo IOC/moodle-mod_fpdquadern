@@ -75,7 +75,7 @@ class exporter {
         return $path;
     }
 
-    private function rewrite_urls($content, $filearea, $itemid=false) {
+    private function format_text($content, $format, $filearea, $itemid=false) {
         $dir = $this->make_temp_dir("$filearea/$itemid");
         $fs = get_file_storage();
         $files = $fs->get_area_files(
@@ -87,7 +87,16 @@ class exporter {
             $file->copy_content_to($dir . '/' . $file->get_filename());
         }
 
-        $pattern = '/(<img[^>]+")@@PLUGINFILE@@\/(.*?)(")/is';
+        $content = file_rewrite_pluginfile_urls(
+            $content, 'pluginfile.php',  $this->controller->context->id,
+            'mod_fpdquadern', $filearea, $itemid);
+        $content = format_text($content, $format);
+
+        $baseurl = file_rewrite_pluginfile_urls(
+            '@@PLUGINFILE@@/', 'pluginfile.php',
+            $this->controller->context->id, 'mod_fpdquadern',
+            $filearea, $itemid);
+        $pattern = '/(<img[^>]+")' . preg_quote($baseurl, '/'). '(.*?)(")/is';
         $callback = function($matches) use ($dir, $filenames) {
             if (in_array($matches[2], $filenames)) {
                 $path = 'file://' . $dir . '/' . $matches[2];
@@ -96,13 +105,7 @@ class exporter {
             }
             return $matches[1] . $path . $matches[3];
         };
-        $content = preg_replace_callback($pattern, $callback, $content);
-
-        $content = file_rewrite_pluginfile_urls(
-            $content, 'pluginfile.php',  $this->controller->context->id,
-            'mod_fpdquadern', $filearea, $itemid);
-
-        return $content;
+        return preg_replace_callback($pattern, $callback, $content);
     }
 
     private function html_avaluacions($valoracio, $rol) {
@@ -155,11 +158,10 @@ class exporter {
     }
 
     private function html_valoracio($activitat, $valoracio, $rol) {
-        $content = format_text(
+        $content = $this->format_text(
             $valoracio->{"valoracio_$rol"},
-            $valoracio->{"format_valoracio_$rol"});
-        $content = $this->rewrite_urls(
-            $content, "valoracio_activitat_$rol", $valoracio->id);
+            $valoracio->{"format_valoracio_$rol"},
+            "valoracio_activitat_$rol", $valoracio->id);
 
         if ($valoracio->{"data_valoracio_$rol"}) {
             $data_a = $activitat->{"data_valoracio_$rol"};
@@ -185,10 +187,9 @@ class exporter {
         $estat = $this->controller->output->estat_activitat($activitat);
         $estat = $estat ? "<em>($estat)</em>" : '';
         $estat .= $this->html_validat($valoracio->valoracio_validada);
-        $descripcio = $this->rewrite_urls(
-            format_text($activitat->descripcio, $activitat->format_descripcio),
+        $descripcio = $this->format_text(
+            $activitat->descripcio, $activitat->format_descripcio,
             'descripcio_activitat', $activitat->id);
-
         $this->write_heading(3, $titol, $estat);
 
         $this->write($descripcio, 4);

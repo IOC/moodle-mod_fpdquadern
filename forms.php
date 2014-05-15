@@ -284,15 +284,7 @@ abstract class base_form extends \moodleform {
 
     protected function add_element_static($name, $label, $value) {
         $name = $name ?: $this->unique_name();
-        /* El Moodle afegeix un espai al final del contingut, i això fa que
-           es mostri una línia en blanc si el contingit acabat amb un bloc.
-           Per amagar-la afegim un marge negatiu a l'estil del contingut,
-           però llavors necessitem afegir la línia en blanc si el contingut
-           no acaba amb un bloc. */
-        if (!preg_match('/<\/(div|p)>$/', trim($value))) {
-            $value .= '<br/>';
-        }
-        $this->_form->addElement('static', $name, $label, $value);
+        $this->_form->addElement('static', $name, $label, trim($value));
     }
 
     protected function add_element_text(
@@ -654,7 +646,7 @@ class dades_professor_form extends base_form {
                 $this->controller->professors_inscrits());
         } else {
             $this->add_element_fullname(
-                $this->controller->alumne->professor(), '');
+                $this->controller->alumne->professor(), 'Nom i cognoms');
         }
         $this->add_buttons();
     }

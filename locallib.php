@@ -120,9 +120,10 @@ class quadern_controller {
             $alumnes[$userid] = $this->quadern->alumne($userid, true);
         }
 
+        $userids = array_keys($alumnes);
+        $userfields = implode(',', user::field_names());
         $users = $DB->get_records_list(
-            'user', 'id', array_keys($alumnes), 'firstname,lastname',
-            'id,firstname,lastname,email,picture,imagealt');
+            'user', 'id', $userids, 'firstname,lastname', $userfields);
 
         return array($alumnes, $users, $groups);
     }
