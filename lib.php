@@ -196,9 +196,10 @@ function fpdquadern_reset_userdata($data) {
 
     $quaderns = $DB->get_records('fpdquadern', array('course' => $data->courseid));
 
-    foreach ($quaderns as $id => $quadern) {
+    foreach ($quaderns as $quadern) {
         $fs = get_file_storage();
-        $cm = get_coursemodule_from_instance('fpdquadern', $id, $data->courseid, false, MUST_EXIST);
+        $cm = get_coursemodule_from_instance(
+            'fpdquadern', $quadern->id, $data->courseid, false, MUST_EXIST);
         $context = context_module::instance($cm->id);
 
         $fs->delete_area_files($context->id, 'mod_fpdquadern', 'quadern_anterior');
@@ -207,28 +208,29 @@ function fpdquadern_reset_userdata($data) {
 
         $rs = $DB->get_recordset_select(
             'fpdquadern_activitats', 'quadern_id = :id AND alumne_id != 0',
-            array('id' => $id), '', 'id');
-        foreach ($rs as $id => $record) {
-            $fs->delete_area_files($context->id, 'mod_fpdquadern', 'descripcio_activitat', $id);
+            array('id' => $quadern->id), '', 'id');
+        foreach ($rs as $r) {
+            $fs->delete_area_files($context->id, 'mod_fpdquadern', 'descripcio_activitat', $r->id);
         }
         $rs->close();
 
-        $DB->delete_records('fpdquadern_alumnes', array('quadern_id' => $id));
-        $DB->delete_records('fpdquadern_fases', array('quadern_id' => $id));
-        $DB->delete_records('fpdquadern_seguiment', array('quadern_id' => $id));
-        $DB->delete_records('fpdquadern_valoracions', array('quadern_id' => $id));
-        $DB->delete_records('fpdquadern_avaluacions', array('quadern_id' => $id));
+        $DB->delete_records('fpdquadern_alumnes', array('quadern_id' => $quadern->id));
+        $DB->delete_records('fpdquadern_fases', array('quadern_id' => $quadern->id));
+        $DB->delete_records('fpdquadern_seguiment', array('quadern_id' => $quadern->id));
+        $DB->delete_records('fpdquadern_valoracions', array('quadern_id' => $quadern->id));
+        $DB->delete_records('fpdquadern_avaluacions', array('quadern_id' => $quadern->id));
         $DB->delete_records_select(
-            'fpdquadern_activitats', 'quadern_id = :id AND alumne_id != 0', array('id' => $id));
+            'fpdquadern_activitats', 'quadern_id = :id AND alumne_id != 0',
+            array('id' => $quadern->id));
 
-        if (empty($data->reset_gradebook_grades)) {
+        if (!empty($data->reset_gradebook_grades)) {
             fpdquadern_grade_item_update($quadern, 'reset');
         }
 
         $status[] = array(
             'component' => get_string('modulenameplural', 'fpdquadern'),
             'item'=> 'Suprimeix tots els quaderns',
-            'error'=>false,
+            'error'=> false,
         );
     }
 
