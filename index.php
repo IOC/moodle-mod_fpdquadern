@@ -21,7 +21,10 @@ require_course_login($course);
 $context = \context_course::instance($course->id);
 require_capability('mod/fpdquadern:view', $context);
 
-add_to_log($course->id, 'assign', 'view all', 'index.php?id=$course->id', '');
+$event = \mod_fpdquadern\event\course_module_instance_list_viewed::create(array(
+    'context' => \context_course::instance($course->id)
+));
+$event->trigger();
 
 $PAGE->set_url('/mod/fpdquadern/index.php', array('id' => $id));
 $PAGE->set_pagelayout('incourse');

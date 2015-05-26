@@ -15,15 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package mod_fpdquadern
- * @copyright 2013 Institut Obert de Catalunya
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author Albert Gasset <albert@ioc.cat>
+ * The mod_fpdquadern course module instance list viewed event.
+ *
+ * @package    mod_fpdquadern
+ * @since      Moodle 2.7
+ * @copyright  2015 Institut Obert de Catalunya
+ * @author     Marc Català <reskit@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace mod_fpdquadern\event;
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version = 2015052600;
-$module->requires = 2014051200;
-$module->component = 'mod_fpdquadern';
-$module->cron = 0;
+class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {
+}
