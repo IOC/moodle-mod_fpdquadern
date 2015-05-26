@@ -1,5 +1,6 @@
 <?php
 
+$string['fpdquadern:view'] = 'Veure un quadern FPD';
 $string['fpdquadern:addinstance'] = 'Afegeix un quadern FPD';
 $string['fpdquadern:admin'] = 'Administrador (quadern FPD)';
 $string['fpdquadern:alumne'] = 'Alumne (quadern FPD)';
