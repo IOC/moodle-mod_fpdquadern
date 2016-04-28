@@ -23,7 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2015052900;
-$plugin->requires = 2014051200;
+$plugin->version = 2016042800;
+$plugin->requires = 2015051100;
 $plugin->component = 'mod_fpdquadern';
 $plugin->cron = 0;
